@@ -2,30 +2,10 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-#[derive(Deserialize)]
-struct For_vect {
-    collectionId: String,
-    collectionName: String,
-    created: String,
-    created_at: String,
-    field: String,
-    id: String,
-    money: u128,
-    updated: String,
-    username: String,
-}
+mod crud;
 
-#[derive(Deserialize)]
-struct User {
-    page: i32,
-    perPage: i32,
-    totalItems: i32,
-    totalPages: i32,
-    items: Vec<For_vect>,
-}
-
-use reqwest;
-use serde::{Deserialize, Serialize};
+// use reqwest;
+// use serde::{Deserialize, Serialize};
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem};
 use tauri::{Manager, SystemTrayEvent};
 
@@ -34,19 +14,55 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 #[tauri::command]
-async fn get_user(url: String) -> String {
-    let mut some_string = String::from(&url);
-    some_string.push_str("/api/collections/user/records");
-    let client = reqwest::Client::new();
-    let resp = client
-        .get(&some_string)
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .expect("failed");
-    format!("{}", resp)
+async fn list_data(collection: String, host: String, port: i32) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
+    user.list()
+}
+#[tauri::command]
+async fn select_data(collection: String, host: String, port: i32, id: String) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
+    user.select(id)
+}
+#[tauri::command]
+async fn delete_data(collection: String, host: String, port: i32, id: String) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
+    user.delete(id)
+}
+#[tauri::command]
+async fn create_data(collection: String, host: String, port: i32, data: String) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
+    user.create(data)
+}
+#[tauri::command]
+async fn update_data(
+    collection: String,
+    host: String,
+    port: i32,
+    data: String,
+    id: String,
+) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
+    user.update(id, data)
 }
 
 fn main() {
@@ -61,14 +77,21 @@ fn main() {
     let system_tray = SystemTray::new().with_menu(tray_menu);
     tauri::Builder::default()
         .system_tray(system_tray)
-        .invoke_handler(tauri::generate_handler![get_user, greet])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            list_data,
+            create_data,
+            update_data,
+            delete_data,
+            select_data
+        ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
                 position: _,
                 size: _,
                 ..
             } => {
-                let window = match app.get_window("main") {
+                match app.get_window("main") {
                     Some(window) => match window.is_visible().expect("winvis") {
                         true => {
                             // hide the window instead of closing due to processes not closing memory leak: https://github.com/tauri-apps/wry/issues/590
