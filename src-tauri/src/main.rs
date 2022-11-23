@@ -14,13 +14,13 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 #[tauri::command]
-async fn list_data(collection: String, host: String, port: i32) -> String {
+async fn list_data(collection: String, host: String, port: i32, param: Option<String>) -> String {
     let user = crud::Collection {
         host,
         port,
         collection,
     };
-    user.list()
+    user.list(param)
 }
 #[tauri::command]
 async fn select_data(collection: String, host: String, port: i32, id: String) -> String {

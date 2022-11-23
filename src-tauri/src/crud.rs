@@ -22,10 +22,16 @@ impl Collection {
         )
     }
     #[tokio::main]
-    pub async fn list(&self) -> String {
+    pub async fn list(&self, param: Option<String>) -> String {
+        let mut url = String::new();
+        if param.is_some() {
+            url.push_str(&[&self.url_struct(), "?", &param.unwrap()].concat());
+        } else {
+            url.push_str(&self.url_struct());
+        };
         let client = reqwest::Client::new();
         client
-            .get(&self.url_struct())
+            .get(&url)
             .send()
             .await
             .unwrap()
@@ -73,7 +79,7 @@ impl Collection {
             .unwrap()
             .text()
             .await
-            .expect("failed to create")
+            .expect("failed to update")
     }
     #[tokio::main]
     pub async fn delete(&self, id: String) -> String {
