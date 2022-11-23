@@ -2,68 +2,68 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-mod crud;
 
 // use reqwest;
 // use serde::{Deserialize, Serialize};
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem};
 use tauri::{Manager, SystemTrayEvent};
+pub mod command;
 
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-#[tauri::command]
-async fn list_data(collection: String, host: String, port: i32, param: Option<String>) -> String {
-    let user = crud::Collection {
-        host,
-        port,
-        collection,
-    };
-    user.list(param)
-}
-#[tauri::command]
-async fn select_data(collection: String, host: String, port: i32, id: String) -> String {
-    let user = crud::Collection {
-        host,
-        port,
-        collection,
-    };
-    user.select(id)
-}
-#[tauri::command]
-async fn delete_data(collection: String, host: String, port: i32, id: String) -> String {
-    let user = crud::Collection {
-        host,
-        port,
-        collection,
-    };
-    user.delete(id)
-}
-#[tauri::command]
-async fn create_data(collection: String, host: String, port: i32, data: String) -> String {
-    let user = crud::Collection {
-        host,
-        port,
-        collection,
-    };
-    user.create(data)
-}
-#[tauri::command]
-async fn update_data(
-    collection: String,
-    host: String,
-    port: i32,
-    data: String,
-    id: String,
-) -> String {
-    let user = crud::Collection {
-        host,
-        port,
-        collection,
-    };
-    user.update(id, data)
-}
+// #[tauri::command]
+// fn greet(name: &str) -> String {
+//     format!("Hello, {}! You've been greeted from Rust!", name)
+// }
+// #[tauri::command]
+// async fn list_data(collection: String, host: String, port: i32, param: Option<String>) -> String {
+//     let user = crud::Collection {
+//         host,
+//         port,
+//         collection,
+//     };
+//     user.list(param)
+// }
+// #[tauri::command]
+// async fn select_data(collection: String, host: String, port: i32, id: String) -> String {
+//     let user = crud::Collection {
+//         host,
+//         port,
+//         collection,
+//     };
+//     user.select(id)
+// }
+// #[tauri::command]
+// async fn delete_data(collection: String, host: String, port: i32, id: String) -> String {
+//     let user = crud::Collection {
+//         host,
+//         port,
+//         collection,
+//     };
+//     user.delete(id)
+// }
+// #[tauri::command]
+// async fn create_data(collection: String, host: String, port: i32, data: String) -> String {
+//     let user = crud::Collection {
+//         host,
+//         port,
+//         collection,
+//     };
+//     user.create(data)
+// }
+// #[tauri::command]
+// async fn update_data(
+//     collection: String,
+//     host: String,
+//     port: i32,
+//     data: String,
+//     id: String,
+// ) -> String {
+//     let user = crud::Collection {
+//         host,
+//         port,
+//         collection,
+//     };
+//     user.update(id, data)
+// }
 
 fn main() {
     let tray_menu = SystemTrayMenu::new()
@@ -82,12 +82,12 @@ fn main() {
     tauri::Builder::default()
         .system_tray(system_tray)
         .invoke_handler(tauri::generate_handler![
-            greet,
-            list_data,
-            create_data,
-            update_data,
-            delete_data,
-            select_data
+            command::create_data,
+            command::list_data,
+            command::select_data,
+            command::greet,
+            command::delete_data,
+            command::update_data
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
@@ -116,10 +116,7 @@ fn main() {
                     match app.get_window("main") {
                         Some(window) => match window.is_visible().expect("winvis") {
                             true => {
-                                // hide the window instead of closing due to processes not closing memory leak: https://github.com/tauri-apps/wry/issues/590
                                 window.hide().expect("winhide");
-                                // window.close().expect("winclose");
-                                return;
                             }
                             false => window.show().expect("error"),
                         },
