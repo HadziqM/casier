@@ -66,14 +66,18 @@ async fn update_data(
 }
 
 fn main() {
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let show = CustomMenuItem::new("show".to_string(), "Show");
     let tray_menu = SystemTrayMenu::new()
-        .add_item(quit)
+        .add_item(CustomMenuItem::new("quit".to_string(), "Quit"))
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(hide)
-        .add_item(show);
+        .add_item(CustomMenuItem::new("hide".to_string(), "Hide/Show"))
+        // .add_item(CustomMenuItem::new(
+        //     "resize".to_string(),
+        //     "Maximize/Minimize",
+        // ))
+        .add_item(CustomMenuItem::new(
+            "window".to_string(),
+            "Fullscreen/Window",
+        ));
     let system_tray = SystemTray::new().with_menu(tray_menu);
     tauri::Builder::default()
         .system_tray(system_tray)
@@ -109,12 +113,36 @@ fn main() {
                     std::process::exit(0);
                 }
                 "hide" => {
-                    let window = app.get_window("main").unwrap();
-                    window.hide().expect("error");
+                    match app.get_window("main") {
+                        Some(window) => match window.is_visible().expect("winvis") {
+                            true => {
+                                // hide the window instead of closing due to processes not closing memory leak: https://github.com/tauri-apps/wry/issues/590
+                                window.hide().expect("winhide");
+                                // window.close().expect("winclose");
+                                return;
+                            }
+                            false => window.show().expect("error"),
+                        },
+                        None => return,
+                    };
                 }
-                "show" => {
+                "window" => {
                     let window = app.get_window("main").unwrap();
-                    window.show().expect("error");
+                    match window.is_fullscreen().expect("idk") {
+                        true => window
+                            .set_fullscreen(false)
+                            .expect("windows cant be fullscreen"),
+                        false => window
+                            .set_fullscreen(true)
+                            .expect("windows cant be fullscreen"),
+                    }
+                }
+                "resize" => {
+                    let window = app.get_window("main").unwrap();
+                    match window.is_maximized().expect("idk") {
+                        true => window.maximize().expect("window isnt resizable"),
+                        false => window.unmaximize().expect("window isnt resizable"),
+                    }
                 }
                 _ => {}
             },
