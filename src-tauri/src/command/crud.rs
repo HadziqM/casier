@@ -1,5 +1,4 @@
 use reqwest;
-use tokio;
 
 pub struct Collection {
     pub(crate) host: String,
@@ -21,7 +20,6 @@ impl Collection {
             &self.host, &self.port, &self.collection
         )
     }
-    #[tokio::main]
     pub async fn list(&self, param: Option<String>) -> String {
         let mut url = String::new();
         if param.is_some() {
@@ -39,7 +37,6 @@ impl Collection {
             .await
             .expect("failed to get list")
     }
-    #[tokio::main]
     pub async fn select(&self, id: String) -> String {
         let url = [&self.url_struct(), "/", &id].concat();
         let client = reqwest::Client::new();
@@ -52,7 +49,6 @@ impl Collection {
             .await
             .expect("failed to select")
     }
-    #[tokio::main]
     pub async fn create(&self, data: String) -> String {
         let client = reqwest::Client::new();
         client
@@ -66,7 +62,6 @@ impl Collection {
             .await
             .expect("failed to create")
     }
-    #[tokio::main]
     pub async fn update(&self, id: String, data: String) -> String {
         let url = [&self.url_struct(), "/", &id].concat();
         let client = reqwest::Client::new();
@@ -81,7 +76,6 @@ impl Collection {
             .await
             .expect("failed to update")
     }
-    #[tokio::main]
     pub async fn delete(&self, id: String) -> String {
         let url = [&self.url_struct(), "/", &id].concat();
         let client = reqwest::Client::new();

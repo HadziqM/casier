@@ -1,4 +1,4 @@
-export interface Pruduct{
+export interface Product{
   totalItems:number
   items:{
     category:string

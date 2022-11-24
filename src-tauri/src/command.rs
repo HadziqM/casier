@@ -16,16 +16,17 @@ pub async fn list_data(
         port,
         collection,
     };
-    user.list(param)
+    user.list(param).await
 }
 #[tauri::command]
 pub async fn select_data(collection: String, host: String, port: i32, id: String) -> String {
+    println!("invoked");
     let user = crud::Collection {
         host,
         port,
         collection,
     };
-    user.select(id)
+    user.select(id).await
 }
 #[tauri::command]
 pub async fn delete_data(collection: String, host: String, port: i32, id: String) -> String {
@@ -34,7 +35,7 @@ pub async fn delete_data(collection: String, host: String, port: i32, id: String
         port,
         collection,
     };
-    user.delete(id)
+    user.delete(id).await
 }
 #[tauri::command]
 pub async fn create_data(collection: String, host: String, port: i32, data: String) -> String {
@@ -43,7 +44,7 @@ pub async fn create_data(collection: String, host: String, port: i32, data: Stri
         port,
         collection,
     };
-    user.create(data)
+    user.create(data).await
 }
 #[tauri::command]
 pub async fn update_data(
@@ -58,5 +59,5 @@ pub async fn update_data(
         port,
         collection,
     };
-    user.update(id, data)
+    user.update(id, data).await
 }
