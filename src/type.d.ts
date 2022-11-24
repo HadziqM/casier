@@ -1,18 +1,103 @@
-export interface AllUser {
-    page: number;
-    perPage: number;
-    totalItems: number;
-    totalPages: number;
-    items: {
-      collectionId: string;
-      collectionName: string;
-      created: string;
-      created_at: string;
-      field: string;
-      id: string;
-      money: number;
-      updated: string;
-      username: string;
-    }[];
-  }
-  
+export interface Pruduct{
+  totalItems:number
+  items:{
+    category:string
+    created:string
+    updated:string
+    id:string
+    name:string
+    price:number
+    stock:number
+  }[]
+}
+export interface Search{
+  totalItems:number
+  items:{
+    id:string
+    name:string
+    expand:{
+      product:{
+        name:string
+        id:string
+      }
+    }
+  }[]
+}
+export interface Cart{
+  totalItems:number
+  items:{
+    id:string
+    unit:number
+    expand:{
+      product:{
+        id:string
+        name:string
+        price:number
+        stock:number
+      }
+    }
+  }[]
+}
+export interface Customer{
+  totalItems:number
+  items:{
+    updated:string
+    id:string
+    name:string
+    address:string
+    bought:number
+  }[]
+}
+export interface Company{
+  totalItems:number
+  items:{
+    id:string
+    name:string
+    expand:{
+      customer:{
+        id:string
+        name:string
+        bought:number
+        adress:string
+      }
+    }
+  }[]
+}
+export interface Transaction{
+  totalItems:number
+  items:{
+    created:string
+    updated:string
+    id:string
+    full:boolean
+    debt:number
+    due:string
+    total:number
+    product:string
+    expand:{
+      customer:{
+        name:string
+        id:string
+        address:string
+        bought:number
+      }
+    }
+  }[] 
+}
+export interface Hystory{
+  totalItems:number
+  items:{
+    id:string
+    created:string
+    unit:number
+    total:number
+    expand:{
+      product:{
+        id:string
+        name:string
+        price:number
+        stock:number
+      }
+    }
+  }[]
+}
