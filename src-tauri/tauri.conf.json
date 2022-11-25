@@ -90,11 +90,12 @@
     },
     "windows": [
       {
-        "fullscreen": true,
+        "fullscreen": false,
         "height": 600,
+        "decorations": false,
         "resizable": true,
         "title": "casier",
-        "width": 800
+        "width": 1000
       }
     ]
   }

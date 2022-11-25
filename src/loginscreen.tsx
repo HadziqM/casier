@@ -12,6 +12,21 @@ export default function Login({ logged, productData }: Props) {
   const [loading, setLoading] = useState(false);
   const login = async () => {
     setLoading(true);
+    // for (let i = 0; i < 100; i++) {
+    //   await invoke("create_data", {
+    //     collection: "product",
+    //     host: host,
+    //     port: port,
+    //     data: JSON.stringify({
+    //       name:
+    //         new Date().getTime().toString() +
+    //         (100000000000 * Math.random()).toString,
+    //       price: 10000,
+    //       stock: 10,
+    //       category: "dummy",
+    //     }),
+    //   });
+    // }
     const data: Product = JSON.parse(
       await invoke("list_data", {
         collection: "product",
@@ -21,7 +36,16 @@ export default function Login({ logged, productData }: Props) {
       })
     );
     setLoading(false);
-    productData(data);
+    productData(
+      JSON.parse(
+        await invoke("list_data", {
+          collection: "product",
+          host: host,
+          port: port,
+          param: `perPage=${data.totalItems}&sort=name`,
+        })
+      ) as Product
+    );
     logged();
   };
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
