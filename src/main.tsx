@@ -9,8 +9,10 @@ import "./tailwind.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <Background />
-    <Title />
-    <Main />
+    <div className="font-mono">
+      <Background />
+      <Title />
+      <Main />
+    </div>
   </React.StrictMode>
 );

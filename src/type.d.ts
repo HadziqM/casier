@@ -1,6 +1,8 @@
 export interface Product{
-  totalItems:number
-  items:{
+  error?:number
+  status?:number
+  totalItems?:number
+  items?:{
     category:string
     created:string
     updated:string

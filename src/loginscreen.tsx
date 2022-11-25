@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { Product } from "./type";
-import { useRef, useState } from "react";
+import { useState } from "react";
 interface Props {
   logged: () => void;
   productData: (data: Product) => void;
@@ -9,43 +9,25 @@ interface Props {
 export default function Login({ logged, productData }: Props) {
   const [host, setHost] = useState("http://127.0.0.1");
   const [port, setPort] = useState(8090);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState("Waiting for submit");
   const login = async () => {
-    setLoading(true);
-    // for (let i = 0; i < 100; i++) {
-    //   await invoke("create_data", {
-    //     collection: "product",
-    //     host: host,
-    //     port: port,
-    //     data: JSON.stringify({
-    //       name:
-    //         new Date().getTime().toString() +
-    //         (100000000000 * Math.random()).toString,
-    //       price: 10000,
-    //       stock: 10,
-    //       category: "dummy",
-    //     }),
-    //   });
-    // }
-    // const data: Product = JSON.parse(
-    //   await invoke("list_data", {
-    //     collection: "product",
-    //     host: host,
-    //     port: port,
-    //     param: "perPage=1",
-    //   })
-    // );
-    setLoading(false);
-    productData(
-      JSON.parse(
-        await invoke("get_all", {
-          collection: "product",
-          host: host,
-          port: port,
-        })
-      ) as Product
-    );
-    logged();
+    setLoading("loading....");
+    const data = JSON.parse(
+      await invoke("get_all", {
+        collection: "product",
+        host: host,
+        port: port,
+      })
+    ) as Product;
+    if (data.error) {
+      setLoading("Error connecting to database");
+    } else if (data.status) {
+      setLoading("Connected to database but doesnt have access");
+    } else {
+      setLoading("Connected to database successfully");
+      productData(data);
+      setTimeout(() => logged(), 1000);
+    }
   };
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +35,7 @@ export default function Login({ logged, productData }: Props) {
   };
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
-      {loading && <div>Loanding...</div>}
+      <div>{loading}</div>
       <form
         className="flex flex-col justify-center gap-4 p-4 border border-black"
         onSubmit={onSubmit}
@@ -78,7 +60,7 @@ export default function Login({ logged, productData }: Props) {
             setPort(Number(e.currentTarget.value));
           }}
         />
-        <input type={"submit"} />
+        <input type={"submit"} className="cursor-pointer" />
       </form>
     </div>
   );

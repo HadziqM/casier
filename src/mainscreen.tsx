@@ -30,7 +30,7 @@ export default function Main() {
               </p>
             </div>
             <div className="absolute bottom-0 h-[570px] overflow-auto"></div>
-            {product.items.map((e) => (
+            {product.items?.map((e) => (
               <Card
                 name={e.name}
                 price={e.price}

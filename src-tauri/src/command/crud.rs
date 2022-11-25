@@ -41,7 +41,7 @@ impl Collection {
         };
         let client = reqwest::Client::new();
         match client.get(&url).send().await {
-            Ok(result) => result.text().await.expect("no response"),
+            Ok(result) => result.text().await.expect("no response message"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -49,7 +49,7 @@ impl Collection {
         let url = [&self.url_struct(), "/", &id].concat();
         let client = reqwest::Client::new();
         match client.get(&url).send().await {
-            Ok(result) => result.text().await.expect("no response"),
+            Ok(result) => result.text().await.expect("no response message"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -62,7 +62,7 @@ impl Collection {
             .send()
             .await
         {
-            Ok(result) => result.text().await.expect("no response"),
+            Ok(result) => result.text().await.expect("no response message"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -76,7 +76,7 @@ impl Collection {
             .send()
             .await
         {
-            Ok(result) => result.text().await.expect("no response"),
+            Ok(result) => result.text().await.expect("no response message"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -89,7 +89,7 @@ impl Collection {
             .send()
             .await
         {
-            Ok(result) => result.text().await.expect("no response"),
+            Ok(result) => result.text().await.expect("no response message"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
