@@ -1,4 +1,5 @@
 pub mod crud;
+use serde::{Deserialize, Serialize};
 
 #[tauri::command]
 pub fn greet(name: &str) -> String {
@@ -20,7 +21,6 @@ pub async fn list_data(
 }
 #[tauri::command]
 pub async fn select_data(collection: String, host: String, port: i32, id: String) -> String {
-    println!("invoked");
     let user = crud::Collection {
         host,
         port,
@@ -60,4 +60,12 @@ pub async fn update_data(
         collection,
     };
     user.update(id, data).await
+}
+#[tauri::command]
+pub async fn get_product(collection: String, host: String, port: i32) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
 }
