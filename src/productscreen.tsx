@@ -10,7 +10,7 @@ export default function ProductSc({ product }: Props) {
   const [count, setCount] = useState(product.totalItems || 0);
 
   return (
-    <div className="flex flex-col absolute top-0 w-screen justify-center items-center">
+    <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
       <p>{product.totalItems || 0}</p>
       <div className="p-[10px] border-[3px] border-purple-600 rounded-2xl bg-[rgba(30,0,30,0.8)]">
         <div className="relative flex-flex-col w-[632px] h-[380px] overflow-auto">

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Product } from "./type";
-import { open, save } from "@tauri-apps/api/dialog";
+import Menu from "./components/menubar";
 import Login from "./loginscreen";
 import ProductSc from "./productscreen";
-import Card from "./components/productdata";
 
 export default function Main() {
   const [product, setProduct] = useState({} as Product);
@@ -12,8 +11,9 @@ export default function Main() {
     <>
       {login ? (
         <>
+          <Menu />
           <ProductSc product={product} />
-          <div className="flex flex-col items-center absolute bottom-0">
+          <div className="flex flex-col items-center absolute bottom-0 right-0">
             <h1>Its main Screen</h1>
             <button onClick={() => setLogin(false)}>Back</button>
           </div>
