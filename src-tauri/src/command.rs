@@ -61,6 +61,21 @@ pub async fn update_data(
     user.update(id, data).await
 }
 #[tauri::command]
+pub async fn update_or_create(
+    collection: String,
+    host: String,
+    port: i32,
+    data: String,
+    id: String,
+) -> String {
+    let user = crud::Collection {
+        host,
+        port,
+        collection,
+    };
+    user.update_or_create(id, data).await
+}
+#[tauri::command]
 pub async fn get_all(collection: String, host: String, port: i32, param: Option<String>) -> String {
     let user = crud::Collection {
         host,

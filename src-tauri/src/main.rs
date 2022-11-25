@@ -23,7 +23,10 @@ fn main() {
             command::select_data,
             command::greet,
             command::delete_data,
-            command::update_data
+            command::update_data,
+            command::update_or_create,
+            command::get_all,
+            command::delete_all
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
