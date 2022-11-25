@@ -4,9 +4,10 @@ import { useState } from "react";
 interface Props {
   logged: () => void;
   productData: (data: Product) => void;
+  loginData: (data: { host: string; port: number }) => void;
 }
 
-export default function Login({ logged, productData }: Props) {
+export default function Login({ logged, productData, loginData }: Props) {
   const [host, setHost] = useState("http://127.0.0.1");
   const [port, setPort] = useState(8090);
   const [loading, setLoading] = useState("Waiting for submit");
@@ -26,6 +27,7 @@ export default function Login({ logged, productData }: Props) {
     } else {
       setLoading("Connected to database successfully");
       productData(data);
+      loginData({ host, port });
       setTimeout(() => logged(), 1000);
     }
   };

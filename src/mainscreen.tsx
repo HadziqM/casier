@@ -7,16 +7,22 @@ import PrintSc from "./printsreen";
 import DebtSc from "./debtscreen";
 import ProductSc from "./productscreen";
 
+interface LoginP {
+  host: string;
+  port: number;
+}
+
 export default function Main() {
   const [product, setProduct] = useState({} as Product);
   const [login, setLogin] = useState(false);
+  const [logData, setLogData] = useState({} as LoginP);
   const pageList = [
-    <ProductSc product={product} />,
+    <ProductSc product={product} logData={logData} />,
     <CartSc />,
     <PrintSc />,
     <DebtSc />,
   ];
-  const [page, setPage] = useState(pageList[0]);
+  const [page, setPage] = useState(<div />);
   return (
     <>
       {login ? (
@@ -30,8 +36,12 @@ export default function Main() {
         </>
       ) : (
         <Login
-          logged={() => setLogin(true)}
+          logged={() => {
+            setLogin(true);
+            setPage(pageList[0]);
+          }}
           productData={(data: Product) => setProduct(data)}
+          loginData={(data: LoginP) => setLogData(data)}
         />
       )}
     </>
