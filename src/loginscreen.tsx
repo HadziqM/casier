@@ -27,22 +27,21 @@ export default function Login({ logged, productData }: Props) {
     //     }),
     //   });
     // }
-    const data: Product = JSON.parse(
-      await invoke("list_data", {
-        collection: "product",
-        host: host,
-        port: port,
-        param: "perPage=1",
-      })
-    );
+    // const data: Product = JSON.parse(
+    //   await invoke("list_data", {
+    //     collection: "product",
+    //     host: host,
+    //     port: port,
+    //     param: "perPage=1",
+    //   })
+    // );
     setLoading(false);
     productData(
       JSON.parse(
-        await invoke("list_data", {
+        await invoke("get_all", {
           collection: "product",
           host: host,
           port: port,
-          param: `perPage=${data.totalItems}&sort=name`,
         })
       ) as Product
     );

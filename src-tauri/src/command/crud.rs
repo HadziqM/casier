@@ -40,16 +40,16 @@ impl Collection {
             url.push_str(&self.url_struct());
         };
         let client = reqwest::Client::new();
-        match client.get(&url).send().await.unwrap().text().await {
-            Ok(result) => result,
+        match client.get(&url).send().await {
+            Ok(result) => result.text().await.expect("no response"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
     pub async fn select(&self, id: String) -> String {
         let url = [&self.url_struct(), "/", &id].concat();
         let client = reqwest::Client::new();
-        match client.get(&url).send().await.unwrap().text().await {
-            Ok(result) => result,
+        match client.get(&url).send().await {
+            Ok(result) => result.text().await.expect("no response"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -61,11 +61,8 @@ impl Collection {
             .body(data)
             .send()
             .await
-            .unwrap()
-            .text()
-            .await
         {
-            Ok(result) => result,
+            Ok(result) => result.text().await.expect("no response"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -78,11 +75,8 @@ impl Collection {
             .body(data)
             .send()
             .await
-            .unwrap()
-            .text()
-            .await
         {
-            Ok(result) => result,
+            Ok(result) => result.text().await.expect("no response"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -94,11 +88,8 @@ impl Collection {
             .headers(self.construct_headers())
             .send()
             .await
-            .unwrap()
-            .text()
-            .await
         {
-            Ok(result) => result,
+            Ok(result) => result.text().await.expect("no response"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
