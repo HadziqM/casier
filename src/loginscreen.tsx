@@ -60,7 +60,9 @@ export default function Login({ logged, productData }: Props) {
             setPort(Number(e.currentTarget.value));
           }}
         />
-        <input type={"submit"} className="cursor-pointer" />
+        <button type={"submit"} className="cursor-pointer bg-[rgba(0,0,0,0.8)]">
+          Submit
+        </button>
       </form>
     </div>
   );

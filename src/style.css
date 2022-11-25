@@ -39,6 +39,9 @@ button {
 button:hover {
   border-color: #396cd8;
 }
+button:focus {
+  transform: translateY(1px);
+}
 
 input,
 button {
@@ -47,7 +50,7 @@ button {
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
-  background: black;
+  background: #304;
 }
 
 /* Track */
@@ -58,12 +61,13 @@ button {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #555;
+  background: #909;
+  border-radius: 50%;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #333;
+  background: #a0a;
 }
 .titlebar {
   height: 30px;
@@ -72,6 +76,7 @@ button {
   display: flex;
   justify-content: flex-end;
   position: fixed;
+  z-index: 10;
   top: 0;
   left: 0;
   right: 0;
