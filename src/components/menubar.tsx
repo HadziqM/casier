@@ -1,20 +1,49 @@
+import { useState } from "react";
 import { FaHome, FaShoppingCart, FaMoneyBill, FaPrint } from "react-icons/fa";
 
-export default function Menu() {
+interface Iprop {
+  children: React.ReactNode;
+  click: () => void;
+  act: boolean;
+}
+
+function Icons({ children, click, act }: Iprop) {
   return (
-    <div className="flex absolute left-0 h-screen flex-col justify-center items-center w-[100px] bg-[rgba(20,0,20,0.8)]">
-      <div>
-        <FaHome className="w-10 h-10 my-4 text-purple-700" />
-      </div>
-      <div>
-        <FaShoppingCart className="w-10 h-10 my-4 text-purple-700" />
-      </div>
-      <div>
-        <FaPrint className="w-10 h-10 my-4 text-purple-700" />
-      </div>
-      <div>
-        <FaMoneyBill className="w-10 h-10 my-4 text-purple-700" />
-      </div>
+    <div
+      style={act ? { background: "rgba(0,0,0,0.5)" } : {}}
+      className="w-full flex items-center justify-center"
+      onClick={() => click()}
+    >
+      {children}
+    </div>
+  );
+}
+
+export default function Menu(prop: { clicked: (index: number) => void }) {
+  const init = [
+    <FaHome className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
+    <FaShoppingCart className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
+    <FaPrint className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
+    <FaMoneyBill className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
+  ];
+  const init2 = [false, false, false, false];
+  const initCopy = [true, false, false, false];
+  const [styleNow, setStyleNow] = useState(initCopy);
+  return (
+    <div className="flex absolute left-0 h-screen flex-col justify-center items-center w-[100px] bg-[rgba(20,0,20,0.8)] gap-1">
+      {init.map((e) => (
+        <Icons
+          act={styleNow[init.indexOf(e)]}
+          click={() => {
+            let copy = [...init2];
+            copy[init.indexOf(e)] = true;
+            setStyleNow(copy);
+            prop.clicked(init.indexOf(e));
+          }}
+        >
+          {e}
+        </Icons>
+      ))}
     </div>
   );
 }
