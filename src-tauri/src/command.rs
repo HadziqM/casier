@@ -1,4 +1,10 @@
 pub mod crud;
+use serde::{Deserialize, Serialize};
+#[derive(Serialize, Deserialize)]
+struct Cart {
+    product: String,
+    unit: i32,
+}
 
 #[tauri::command]
 pub fn greet(name: &str) -> String {
@@ -97,4 +103,30 @@ pub async fn delete_all(
         collection,
     };
     user.delete_all(param).await
+}
+#[tauri::command]
+pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
+    let user = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "product".to_string(),
+    };
+    user.update(
+        String::from(&id),
+        ["{\"stock\":", &rest.to_string(), "}"].concat(),
+    )
+    .await;
+    let second = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "cart".to_string(),
+    };
+    let data_cart = Cart {
+        product: String::from(&id),
+        unit,
+    };
+    second
+        .create(serde_json::to_string(&data_cart).unwrap())
+        .await;
+    second.list_all(Some("expand=product".to_string())).await
 }
