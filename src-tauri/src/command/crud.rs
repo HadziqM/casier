@@ -49,7 +49,7 @@ impl Collection {
         let url = [&self.url_struct(), "/", &id].concat();
         let client = reqwest::Client::new();
         match client.get(&url).send().await {
-            Ok(result) => result.text().await.expect("no response message"),
+            Ok(result) => result.text().await.expect("ga ada pesan"),
             Err(_error) => String::from("{\"error\":400}"),
         }
     }
@@ -113,7 +113,7 @@ impl Collection {
             }
         }
     }
-    pub async fn delete_all(&self) -> String {
+    pub async fn delete_all(&self, param: Option<String>) -> String {
         let listed: Length = serde_json::from_str(&self.list_all(None).await).unwrap();
         if listed.error.is_some() {
             return String::from("{\"error\":400}");
@@ -123,7 +123,7 @@ impl Collection {
             for i in listed.items.unwrap() {
                 self.delete(i.id).await;
             }
-            self.list(None).await
+            self.list(param).await
         }
     }
     pub async fn update_or_create(&self, id: String, data: String) -> String {

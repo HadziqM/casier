@@ -63,7 +63,7 @@ export default function Login({ logged, productData, loginData }: Props) {
           }}
         />
         <button type={"submit"} className="cursor-pointer bg-[rgba(0,0,0,0.8)]">
-          Submit
+          Connect
         </button>
       </form>
     </div>

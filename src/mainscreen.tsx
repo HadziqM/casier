@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Product } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
+import Overview from "./overviewscreen";
 import CartSc from "./cartscreen";
 import PrintSc from "./printsreen";
 import DebtSc from "./debtscreen";
@@ -17,12 +18,13 @@ export default function Main() {
   const [login, setLogin] = useState(false);
   const [logData, setLogData] = useState({} as LoginP);
   const pageList = [
+    <Overview />,
     <ProductSc product={product} logData={logData} />,
     <CartSc />,
     <PrintSc />,
     <DebtSc />,
   ];
-  const [page, setPage] = useState(<div />);
+  const [page, setPage] = useState(pageList[0]);
   return (
     <>
       {login ? (
