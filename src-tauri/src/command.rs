@@ -5,6 +5,40 @@ struct Cart {
     product: String,
     unit: i32,
 }
+#[derive(Serialize, Deserialize)]
+struct Customer {
+    id: Option<String>,
+    name: String,
+    address: Option<String>,
+    bought: i32,
+}
+impl Customer {
+    fn change_bought(&mut self, bought: i32) {
+        self.bought = bought;
+    }
+}
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct CustomerData {
+    total_items: i32,
+    items: Vec<Customer>,
+}
+#[derive(Serialize, Deserialize)]
+struct Company {
+    name: String,
+    customer: String,
+}
+#[derive(Serialize, Deserialize)]
+struct ListCart {
+    id: String,
+    unit: i32,
+    total: i128,
+}
+#[derive(Serialize, Deserialize)]
+struct Nota {
+    total: i128,
+    items: Vec<ListCart>,
+}
 
 #[tauri::command]
 pub fn greet(name: &str) -> String {
@@ -129,4 +163,37 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
         .create(serde_json::to_string(&data_cart).unwrap())
         .await;
     second.list_all(Some("expand=product".to_string())).await
+}
+#[tauri::command]
+pub async fn transaction_all(
+    host: String,
+    port: i32,
+    data: String,
+    name: String,
+    paid: i128,
+    address: Option<String>,
+    company: Option<String>,
+    due: Option<i128>,
+) -> String {
+    let new_data: Nota = serde_json::from_str(&data).unwrap();
+    let customer_data = Customer {
+        id: None,
+        name: String::from(&name),
+        address,
+        bought: 1,
+    };
+    let customer_struct = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "customer".to_string(),
+    };
+    let mut new_id = String::new();
+    let check: CustomerData = serde_json::from_str(&customer_struct.list(Some(format!("filter=(name='{}')", String::from(&name)))).await).unwrap();
+    if check.total_items == 0 {
+        let get_id:Customer = ;
+    } else {
+        customer_data.change_bought(check.items[0].bought.unwrap()+1);
+        new_id.push_str(&customer_struct.update(check.items[0].id.unwrap(), serde_json::to_string(&customer_data).unwrap()).await);
+    }
+    if company.is_some() {}
 }
