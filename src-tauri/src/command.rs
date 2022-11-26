@@ -85,11 +85,16 @@ pub async fn get_all(collection: String, host: String, port: i32, param: Option<
     user.list_all(param).await
 }
 #[tauri::command]
-pub async fn delete_all(collection: String, host: String, port: i32) -> String {
+pub async fn delete_all(
+    collection: String,
+    host: String,
+    port: i32,
+    param: Option<String>,
+) -> String {
     let user = crud::Collection {
         host,
         port,
         collection,
     };
-    user.delete_all().await
+    user.delete_all(param).await
 }
