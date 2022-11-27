@@ -71,6 +71,12 @@ struct InitialDataInput {
     cart: String,
     debt: String,
 }
+#[derive(Serialize, Deserialize)]
+struct ProductUpdated {
+    id: Option<String>,
+    name: Option<String>,
+    code: Option<i32>,
+}
 #[tauri::command]
 pub fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -171,7 +177,6 @@ pub async fn delete_all(
 }
 #[tauri::command]
 pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
-    println!("invoked");
     let user = crud::Collection {
         host: String::from(&host),
         port,
@@ -191,12 +196,43 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
         product: String::from(&id),
         unit,
     };
-    second
-        .create(serde_json::to_string(&data_cart).unwrap())
-        .await;
-    second
-        .list_all(Some("sort=-created&expand=product".to_string()))
-        .await
+    #[derive(Deserialize)]
+    struct CheckId {
+        code: Option<i32>,
+        id: Option<String>,
+        stock: Option<i32>,
+    }
+    let cart_check: CheckId =
+        serde_json::from_str(&second.select(String::from(&id)).await).unwrap();
+    if cart_check.code.is_some() {
+        second
+            .create(serde_json::to_string(&data_cart).unwrap())
+            .await;
+    } else {
+        second
+            .update(
+                String::from(&cart_check.id.unwrap()),
+                [
+                    "{\"stock\":",
+                    (cart_check.stock.unwrap() + unit).to_string().as_ref(),
+                    "}",
+                ]
+                .concat(),
+            )
+            .await;
+    }
+    #[derive(Serialize)]
+    struct ProductCart {
+        product: String,
+        cart: String,
+    }
+    let output = ProductCart {
+        product: user.list_all(Some("sort=name".to_string())).await,
+        cart: second
+            .list(Some("sort=-created&expand=product".to_string()))
+            .await,
+    };
+    serde_json::to_string(&output).unwrap()
 }
 #[tauri::command]
 pub async fn transaction_all(

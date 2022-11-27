@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { Product, Cart, Transaction, ModalData } from "./type";
+import { Product, Cart, Transaction, ModalData, BuyData } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
 import Overview from "./overviewscreen";
@@ -8,6 +8,7 @@ import CartSc from "./cartscreen";
 import PrintSc from "./printsreen";
 import DebtSc from "./debtscreen";
 import ProductSc from "./productscreen";
+import React from "react";
 
 interface LoginP {
   host: string;
@@ -29,8 +30,9 @@ export default function Main() {
         unit: unit,
         id: data.id,
       })
-    ) as Cart;
-    setCart(data_cart);
+    ) as BuyData;
+    setProduct(JSON.parse(data_cart.product) as Product);
+    setCart(JSON.parse(data_cart.cart) as Cart);
   };
   const pageList = [
     <Overview />,
@@ -40,11 +42,15 @@ export default function Main() {
     <DebtSc />,
   ];
   const [page, setPage] = useState(pageList[0]);
+  const changePage = (index: number) => setPage(pageList[index]);
+  useEffect(() => {
+    changePage(1);
+  }, [buyEvent]);
   return (
     <>
       {login ? (
         <>
-          <Menu clicked={(index: number) => setPage(pageList[index])} />
+          <Menu clicked={changePage} />
           {page}
           <div className="flex flex-col items-center absolute bottom-0 right-0">
             <h1>Its main Screen</h1>
