@@ -1,4 +1,5 @@
 pub mod crud;
+
 use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
 struct Cart {
@@ -59,6 +60,10 @@ struct TransactionCreate {
     full: bool,
     debt: Option<i128>,
     due: Option<i128>,
+}
+#[derive(Serialize, Deserialize)]
+struct TransactionList {
+    items: Option<Vec<TransactionCreate>>,
 }
 #[tauri::command]
 pub fn greet(name: &str) -> String {
@@ -303,6 +308,43 @@ pub async fn transaction_all(
             .await;
     }
     transaction_struct
-        .list_all(Some("filter=(full=false)".to_string()))
+        .list_all(Some("filter=(full=false)&sort=-due".to_string()))
+        .await
+}
+#[tauri::command]
+pub async fn debt_collected(host: String, port: i32, id: String, paid: i128) -> String {
+    let transaction_struct = crud::Collection {
+        host,
+        port,
+        collection: "transaction".to_string(),
+    };
+    let transactin_data: TransactionList = serde_json::from_str(
+        &transaction_struct
+            .list(Some(format!("filter=(id='{}')", &id)))
+            .await,
+    )
+    .unwrap();
+    let vec_data = transactin_data.items.unwrap();
+    if vec_data[0].debt.as_ref().unwrap() > &paid {
+        transaction_struct
+            .update(
+                String::from(&id),
+                [
+                    "{\"debt\":",
+                    (vec_data[0].debt.as_ref().unwrap() - &paid)
+                        .to_string()
+                        .as_ref(),
+                    "}",
+                ]
+                .concat(),
+            )
+            .await;
+    } else {
+        transaction_struct
+            .update(String::from(&id), "{\"debt\":0,\"full\":true}".to_string())
+            .await;
+    }
+    transaction_struct
+        .list_all(Some("filter=(full=false)&sort=-due".to_string()))
         .await
 }
