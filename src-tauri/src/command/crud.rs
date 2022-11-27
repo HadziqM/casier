@@ -8,7 +8,7 @@ struct Items {
 #[serde(rename_all = "camelCase")]
 struct Length {
     total_items: Option<i32>,
-    status: Option<i32>,
+    code: Option<i32>,
     error: Option<i32>,
     items: Option<Vec<Items>>,
 }
@@ -98,8 +98,8 @@ impl Collection {
         let now: Length = serde_json::from_str(result).unwrap();
         if now.error.is_some() {
             return String::from("{\"error\":400}");
-        } else if now.status.is_some() {
-            return String::from("{\"status\":400}");
+        } else if now.code.is_some() {
+            return String::from("{\"code\":400}");
         } else {
             match param {
                 Some(e) => {
@@ -117,8 +117,8 @@ impl Collection {
         let listed: Length = serde_json::from_str(&self.list_all(None).await).unwrap();
         if listed.error.is_some() {
             return String::from("{\"error\":400}");
-        } else if listed.status.is_some() {
-            return String::from("{\"status\":400}");
+        } else if listed.code.is_some() {
+            return String::from("{\"code\":400}");
         } else {
             for i in listed.items.unwrap() {
                 self.delete(i.id).await;
@@ -131,7 +131,7 @@ impl Collection {
             serde_json::from_str(&self.update(id, String::from(&data)).await).unwrap();
         if listed.error.is_some() {
             return String::from("{\"error\":400}");
-        } else if listed.status.is_some() {
+        } else if listed.code.is_some() {
             self.create(String::from(&data)).await
         } else {
             serde_json::to_string(&listed).unwrap()

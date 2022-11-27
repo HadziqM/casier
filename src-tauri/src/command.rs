@@ -30,7 +30,7 @@ struct Company {
 }
 #[derive(Serialize, Deserialize)]
 struct ListCart {
-    id: String,
+    product: String,
     unit: i32,
     total: i128,
 }
@@ -38,6 +38,17 @@ struct ListCart {
 struct Nota {
     total: i128,
     items: Vec<ListCart>,
+}
+#[derive(Serialize, Deserialize)]
+struct CompanyCreate {
+    customer: String,
+    name: String,
+}
+#[derive(Serialize, Deserialize)]
+struct HistoryCreate {
+    code: Option<i32>,
+    error: Option<i32>,
+    id: Option<String>,
 }
 
 #[tauri::command]
@@ -175,25 +186,86 @@ pub async fn transaction_all(
     company: Option<String>,
     due: Option<i128>,
 ) -> String {
+    // customer-> company -> history -> transaction -> delete cart
+    let customer = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "customer".to_string(),
+    };
+    let history = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "history".to_string(),
+    };
+    let customer = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "transaction".to_string(),
+    };
     let new_data: Nota = serde_json::from_str(&data).unwrap();
-    let customer_data = Customer {
+    let mut customer_data = Customer {
         id: None,
         name: String::from(&name),
         address,
         bought: 1,
     };
-    let customer_struct = crud::Collection {
-        host: String::from(&host),
-        port,
-        collection: "customer".to_string(),
-    };
     let mut new_id = String::new();
-    let check: CustomerData = serde_json::from_str(&customer_struct.list(Some(format!("filter=(name='{}')", String::from(&name)))).await).unwrap();
+    let check: CustomerData = serde_json::from_str(
+        &customer
+            .list(Some(format!("filter=(name='{}')", String::from(&name))))
+            .await,
+    )
+    .unwrap();
     if check.total_items == 0 {
-        let get_id:Customer = ;
+        let get_id: Customer = serde_json::from_str(
+            &customer
+                .create(serde_json::to_string(&customer_data).unwrap())
+                .await,
+        )
+        .unwrap();
+        new_id.push_str(&get_id.id.unwrap());
     } else {
-        customer_data.change_bought(check.items[0].bought.unwrap()+1);
-        new_id.push_str(&customer_struct.update(check.items[0].id.unwrap(), serde_json::to_string(&customer_data).unwrap()).await);
+        customer_data.change_bought(check.items[0].bought + 1);
+        let first_item = check.items[0].id.as_ref().unwrap();
+        new_id.push_str(
+            &customer
+                .update(
+                    String::from(first_item),
+                    serde_json::to_string(&customer_data).unwrap(),
+                )
+                .await,
+        );
     }
-    if company.is_some() {}
+    if company.is_some() {
+        let company_struct = crud::Collection {
+            host: String::from(&host),
+            port,
+            collection: "company".to_string(),
+        };
+        let company_data = CompanyCreate {
+            name: company.unwrap(),
+            customer: String::from(&new_id),
+        };
+        company_struct
+            .create(serde_json::to_string(&company_data).unwrap())
+            .await;
+    }
+    let mut new_vect_id: Vec<String> = Vec::new();
+    for i in &new_data.items {
+        let history_data: HistoryCreate = serde_json::from_str(
+            &history
+                .create(serde_json::to_string(i.to_owned()).unwrap())
+                .await,
+        )
+        .unwrap();
+        if history_data.error.is_some() {
+            return String::from("{\"error\":400}");
+        } else if history_data.code.is_some() {
+            return String::from("{\"error\":400}");
+        } else {
+            new_vect_id.push(history_data.id.unwrap());
+        }
+    }
+
+    return String::from("hello");
 }
