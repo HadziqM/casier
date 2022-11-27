@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Product } from "./type";
+import { Product, Cart, Transaction } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
 import Overview from "./overviewscreen";
@@ -15,6 +15,8 @@ interface LoginP {
 
 export default function Main() {
   const [product, setProduct] = useState({} as Product);
+  const [cart, setCart] = useState({} as Cart);
+  const [debt, setDebt] = useState({} as Transaction);
   const [login, setLogin] = useState(false);
   const [logData, setLogData] = useState({} as LoginP);
   const pageList = [
@@ -43,6 +45,8 @@ export default function Main() {
             setPage(pageList[0]);
           }}
           productData={(data: Product) => setProduct(data)}
+          cartData={(data: Cart) => setCart(data)}
+          debtData={(data: Transaction) => setDebt(data)}
           loginData={(data: LoginP) => setLogData(data)}
         />
       )}

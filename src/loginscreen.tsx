@@ -10,10 +10,18 @@ import { useState } from "react";
 interface Props {
   logged: () => void;
   productData: (data: Product) => void;
+  cartData: (data: Cart) => void;
+  debtData: (data: Transaction) => void;
   loginData: (data: { host: string; port: number }) => void;
 }
 
-export default function Login({ logged, productData, loginData }: Props) {
+export default function Login({
+  logged,
+  productData,
+  loginData,
+  cartData,
+  debtData,
+}: Props) {
   const icon = [
     <FaExclamationCircle className="w-8 h-8 text-[rgba(50,0,200,0.5)] mr-4" />,
     <FaCheck className="w-8 h-8 text-[rgba(30,200,30,0.5)] mr-4" />,
@@ -44,6 +52,8 @@ export default function Login({ logged, productData, loginData }: Props) {
       setIcons(icon[1]);
       setLoading("Succesfully Connected");
       productData(product);
+      cartData(cart);
+      debtData(debt);
       loginData({ host, port });
       setTimeout(() => logged(), 700);
     }
