@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import Card from "./components/productdata";
 import Modal from "./components/modal";
-import { Product } from "./type";
+import { ModalData, Product } from "./type";
 import { AnimatePresence } from "framer-motion";
 import Table from "./components/table";
 interface Props {
   product: Product;
-  logData: {
-    host: string;
-    port: number;
-  };
+  handleEvent: (data: ModalData, unit: number) => void;
 }
 interface ProdData {
   price: number;
@@ -17,7 +14,7 @@ interface ProdData {
   name: string;
   id: string;
 }
-export default function ProductSc({ product, logData }: Props) {
+export default function ProductSc({ product, handleEvent }: Props) {
   const category = ["All", ...new Set(product.items?.map((e) => e.category))];
   const [selected, setSelected] = useState("All");
   const [count, setCount] = useState(product.totalItems || 0);
@@ -54,7 +51,11 @@ export default function ProductSc({ product, logData }: Props) {
         onExitComplete={() => null}
       >
         {modalView && (
-          <Modal data={prod} handleClose={() => setModalView(false)} />
+          <Modal
+            data={prod}
+            handleClose={() => setModalView(false)}
+            handleEvent={handleEvent}
+          />
         )}
       </AnimatePresence>
     </>

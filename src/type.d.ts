@@ -118,3 +118,9 @@ export interface InitialData{
   cart:string,
   debt:string
 }
+export interface ModalData{
+  name:string
+  stock:number
+  price:number
+  id:string
+}

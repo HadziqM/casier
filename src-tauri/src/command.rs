@@ -171,6 +171,7 @@ pub async fn delete_all(
 }
 #[tauri::command]
 pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
+    println!("invoked");
     let user = crud::Collection {
         host: String::from(&host),
         port,
@@ -193,7 +194,9 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
     second
         .create(serde_json::to_string(&data_cart).unwrap())
         .await;
-    second.list_all(Some("expand=product".to_string())).await
+    second
+        .list_all(Some("sort=-created&expand=product".to_string()))
+        .await
 }
 #[tauri::command]
 pub async fn transaction_all(

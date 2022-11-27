@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Product, Cart, Transaction } from "./type";
+import { invoke } from "@tauri-apps/api/tauri";
+import { Product, Cart, Transaction, ModalData } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
 import Overview from "./overviewscreen";
@@ -19,9 +20,21 @@ export default function Main() {
   const [debt, setDebt] = useState({} as Transaction);
   const [login, setLogin] = useState(false);
   const [logData, setLogData] = useState({} as LoginP);
+  const buyEvent = async (data: ModalData, unit: number) => {
+    const data_cart = JSON.parse(
+      await invoke("buy_update", {
+        host: logData.host,
+        port: logData.port,
+        rest: data.stock - unit,
+        unit: unit,
+        id: data.id,
+      })
+    ) as Cart;
+    setCart(data_cart);
+  };
   const pageList = [
     <Overview />,
-    <ProductSc product={product} logData={logData} />,
+    <ProductSc product={product} handleEvent={buyEvent} />,
     <CartSc data={cart} />,
     <PrintSc />,
     <DebtSc />,

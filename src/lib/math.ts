@@ -1,3 +1,3 @@
 export function currency(money:number){
-    return `Rp.${money.toLocaleString("id-ID")}`
+    return `Rp.${money.toLocaleString("id-ID")},00-`
 }
