@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { Product, Cart, Transaction, ModalData, BuyData } from "./type";
 import Menu from "./components/menubar";
@@ -16,6 +16,14 @@ interface LoginP {
 }
 
 export default function Main() {
+  const useDidMountEffect = (func: () => void, deps: any) => {
+    const didMount = useRef(false);
+
+    useEffect(() => {
+      if (didMount.current) func();
+      else didMount.current = true;
+    }, deps);
+  };
   const [product, setProduct] = useState({} as Product);
   const [cart, setCart] = useState({} as Cart);
   const [debt, setDebt] = useState({} as Transaction);
@@ -45,7 +53,7 @@ export default function Main() {
   const changePage = (index: number) => setPage(pageList[index]);
   useEffect(() => {
     changePage(1);
-  }, [buyEvent]);
+  }, [product]);
   return (
     <>
       {login ? (

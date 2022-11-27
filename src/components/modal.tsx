@@ -7,7 +7,7 @@ import Backdrop from "./backdrop";
 interface Props {
   data: ModalData;
   handleClose: () => void;
-  handleEvent: (data: ModalData, unit: number) => void;
+  handleEvent: (data: ModalData, unit: number) => Promise<void>;
 }
 
 export default function Modal({ handleClose, data, handleEvent }: Props) {
@@ -57,8 +57,8 @@ export default function Modal({ handleClose, data, handleEvent }: Props) {
         </div>
         <div className="flex gap-12">
           <button
-            onClick={() => {
-              handleEvent(data, unit);
+            onClick={async () => {
+              await handleEvent(data, unit);
               handleClose();
             }}
             className="px-2 py-[0.1rem] rounded-full bg-purple-800 hover:bg-purple-600 my-1"

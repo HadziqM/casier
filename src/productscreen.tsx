@@ -6,7 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import Table from "./components/table";
 interface Props {
   product: Product;
-  handleEvent: (data: ModalData, unit: number) => void;
+  handleEvent: (data: ModalData, unit: number) => Promise<void>;
 }
 interface ProdData {
   price: number;
