@@ -65,6 +65,12 @@ struct TransactionCreate {
 struct TransactionList {
     items: Option<Vec<TransactionCreate>>,
 }
+#[derive(Serialize, Deserialize)]
+struct InitialDataInput {
+    product: String,
+    cart: String,
+    debt: String,
+}
 #[tauri::command]
 pub fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -347,4 +353,30 @@ pub async fn debt_collected(host: String, port: i32, id: String, paid: i128) -> 
     transaction_struct
         .list_all(Some("filter=(full=false)&sort=-due".to_string()))
         .await
+}
+#[tauri::command]
+pub async fn get_all_data(host: String, port: i32) -> String {
+    let product = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "product".to_string(),
+    };
+    let cart = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "cart".to_string(),
+    };
+    let debt = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "transaction".to_string(),
+    };
+    let full_data = InitialDataInput {
+        product: product.list_all(Some("sort=name".to_string())).await,
+        cart: cart.list(Some("sort=-created".to_string())).await,
+        debt: debt
+            .list_all(Some("filter=(full=false)&sort=-due".to_string()))
+            .await,
+    };
+    serde_json::to_string(&full_data).unwrap()
 }
