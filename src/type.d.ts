@@ -1,6 +1,6 @@
 export interface Product{
   error?:number
-  status?:number
+  code?:number
   totalItems?:number
   items?:{
     category:string
@@ -26,8 +26,10 @@ export interface Search{
   }[]
 }
 export interface Cart{
-  totalItems:number
-  items:{
+  error?:number
+  code?:number
+  totalItems?:number
+  items?:{
     id:string
     unit:number
     expand:{
@@ -41,8 +43,10 @@ export interface Cart{
   }[]
 }
 export interface Customer{
-  totalItems:number
-  items:{
+  error?:number
+  code?:number
+  totalItems?:number
+  items?:{
     updated:string
     id:string
     name:string
@@ -51,8 +55,10 @@ export interface Customer{
   }[]
 }
 export interface Company{
-  totalItems:number
-  items:{
+  error?:number
+  code?:number
+  totalItems?:number
+  items?:{
     id:string
     name:string
     expand:{
@@ -66,8 +72,10 @@ export interface Company{
   }[]
 }
 export interface Transaction{
-  totalItems:number
-  items:{
+  error?:number
+  code?:number
+  totalItems?:number
+  items?:{
     created:string
     updated:string
     id:string
@@ -87,8 +95,10 @@ export interface Transaction{
   }[] 
 }
 export interface Hystory{
-  totalItems:number
-  items:{
+  error?:number
+  code?:number
+  totalItems?:number
+  items?:{
     id:string
     created:string
     unit:number
@@ -102,4 +112,9 @@ export interface Hystory{
       }
     }
   }[]
+}
+export interface InitialData{
+  product:string,
+  cart:string,
+  debt:string
 }

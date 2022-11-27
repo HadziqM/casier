@@ -26,7 +26,11 @@ fn main() {
             command::update_data,
             command::update_or_create,
             command::get_all,
-            command::delete_all
+            command::delete_all,
+            command::buy_update,
+            command::transaction_all,
+            command::debt_collected,
+            command::get_all_data
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {

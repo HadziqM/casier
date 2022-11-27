@@ -5,7 +5,7 @@ import {
   FaExclamationTriangle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import { Product } from "./type";
+import { Product, Cart, Transaction, InitialData } from "./type";
 import { useState } from "react";
 interface Props {
   logged: () => void;
@@ -26,22 +26,24 @@ export default function Login({ logged, productData, loginData }: Props) {
   const login = async () => {
     setLoading("loading..........");
     const data = JSON.parse(
-      await invoke("get_all", {
-        collection: "product",
+      await invoke("get_all_data", {
         host: host,
         port: port,
       })
-    ) as Product;
-    if (data.error) {
+    ) as InitialData;
+    const product: Product = JSON.parse(data.product);
+    const cart: Cart = JSON.parse(data.cart);
+    const debt: Transaction = JSON.parse(data.debt);
+    if (product.error || cart.error || debt.error) {
       setLoading("Error Connecting");
       setIcons(icon[2]);
-    } else if (data.status) {
+    } else if (product.code || cart.code || debt.code) {
       setIcons(icon[2]);
       setLoading("Doesnt have access ");
     } else {
       setIcons(icon[1]);
       setLoading("Succesfully Connected");
-      productData(data);
+      productData(product);
       loginData({ host, port });
       setTimeout(() => logged(), 700);
     }
