@@ -50,7 +50,16 @@ struct HistoryCreate {
     error: Option<i32>,
     id: Option<String>,
 }
-
+#[derive(Serialize, Deserialize)]
+struct TransactionCreate {
+    customer: String,
+    total: i128,
+    paid: i128,
+    product: Vec<String>,
+    full: bool,
+    debt: Option<i128>,
+    due: Option<i128>,
+}
 #[tauri::command]
 pub fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -186,8 +195,8 @@ pub async fn transaction_all(
     company: Option<String>,
     due: Option<i128>,
 ) -> String {
-    // customer-> company -> history -> transaction -> delete cart
-    let customer = crud::Collection {
+    // customer-> company -> history -> transaction
+    let customer_struct = crud::Collection {
         host: String::from(&host),
         port,
         collection: "customer".to_string(),
@@ -197,7 +206,7 @@ pub async fn transaction_all(
         port,
         collection: "history".to_string(),
     };
-    let customer = crud::Collection {
+    let transaction_struct = crud::Collection {
         host: String::from(&host),
         port,
         collection: "transaction".to_string(),
@@ -211,14 +220,14 @@ pub async fn transaction_all(
     };
     let mut new_id = String::new();
     let check: CustomerData = serde_json::from_str(
-        &customer
+        &customer_struct
             .list(Some(format!("filter=(name='{}')", String::from(&name))))
             .await,
     )
     .unwrap();
     if check.total_items == 0 {
         let get_id: Customer = serde_json::from_str(
-            &customer
+            &customer_struct
                 .create(serde_json::to_string(&customer_data).unwrap())
                 .await,
         )
@@ -228,7 +237,7 @@ pub async fn transaction_all(
         customer_data.change_bought(check.items[0].bought + 1);
         let first_item = check.items[0].id.as_ref().unwrap();
         new_id.push_str(
-            &customer
+            &customer_struct
                 .update(
                     String::from(first_item),
                     serde_json::to_string(&customer_data).unwrap(),
@@ -266,6 +275,34 @@ pub async fn transaction_all(
             new_vect_id.push(history_data.id.unwrap());
         }
     }
-
-    return String::from("hello");
+    if new_data.total > paid {
+        let transaction_data = TransactionCreate {
+            customer: String::from(&new_id),
+            total: new_data.total,
+            paid,
+            full: false,
+            debt: Some(new_data.total - paid),
+            due,
+            product: new_vect_id,
+        };
+        transaction_struct
+            .create(serde_json::to_string(&transaction_data).unwrap())
+            .await;
+    } else {
+        let transaction_data = TransactionCreate {
+            customer: String::from(&new_id),
+            total: new_data.total,
+            paid,
+            full: true,
+            debt: None,
+            due: None,
+            product: new_vect_id,
+        };
+        transaction_struct
+            .create(serde_json::to_string(&transaction_data).unwrap())
+            .await;
+    }
+    transaction_struct
+        .list_all(Some("filter=(full=false)".to_string()))
+        .await
 }
