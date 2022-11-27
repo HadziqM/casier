@@ -22,7 +22,7 @@ export default function Main() {
   const pageList = [
     <Overview />,
     <ProductSc product={product} logData={logData} />,
-    <CartSc />,
+    <CartSc data={cart} />,
     <PrintSc />,
     <DebtSc />,
   ];
