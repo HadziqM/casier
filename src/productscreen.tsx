@@ -24,21 +24,43 @@ export default function ProductSc({ product, handleEvent }: Props) {
   const [viewed, setViewed] = useState(product.items);
   return (
     <>
-      <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
+      <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center gap-2">
         <p>{product.totalItems || 0}</p>
-        <Search
-          get_list={(data: string) => {
-            if (data === "") {
-              setViewed(product.items);
-            } else {
-              setViewed(
-                viewed?.filter((e) =>
-                  e.name.toLowerCase().startsWith(data.toLowerCase())
-                )
-              );
-            }
-          }}
-        />
+        <div className="flex justify-around w-[632px]">
+          <select
+            id="countries"
+            className="bg-[rgba(30,0,30,0.5)] text-gray-200 border border-purple-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
+          >
+            <option className="bg-[rgba(30,0,30,0.5)] text-gray-200" selected>
+              Choose a country
+            </option>
+            <option className="bg-[rgba(30,0,30,0.5)] text-gray-200" value="US">
+              United States
+            </option>
+            <option className="bg-[rgba(30,0,30,0.5)] text-gray-200" value="CA">
+              Canada
+            </option>
+            <option className="bg-[rgba(30,0,30,0.5)] text-gray-200" value="FR">
+              France
+            </option>
+            <option className="bg-[rgba(30,0,30,0.5)] text-gray-200" value="DE">
+              Germany
+            </option>
+          </select>
+          <Search
+            get_list={(data: string) => {
+              if (data === "") {
+                setViewed(product.items);
+              } else {
+                setViewed(
+                  viewed?.filter((e) =>
+                    e.name.toLowerCase().startsWith(data.toLowerCase())
+                  )
+                );
+              }
+            }}
+          />
+        </div>
         <Table useCase={"product"}>
           {viewed?.map((e) => (
             <Card
