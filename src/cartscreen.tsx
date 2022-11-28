@@ -7,9 +7,11 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 interface Prop {
   data: Cart;
+  handleChange: (data: ModalData, unit: number) => Promise<void>;
+  handleDelete: (data: ModalData, unit: number) => Promise<void>;
 }
 
-export default function CartSc({ data }: Prop) {
+export default function CartSc({ data, handleChange, handleDelete }: Prop) {
   const [modalView, setModalView] = useState(false);
   const [cartData, setCartData] = useState({} as ModalData);
   const total = () => {
@@ -51,7 +53,8 @@ export default function CartSc({ data }: Prop) {
             cart
             data={cartData}
             handleClose={() => setModalView(false)}
-            handleEvent={async () => window.alert("clicked")}
+            handleEvent={handleChange}
+            handleDelete={handleDelete}
           />
         )}
       </AnimatePresence>

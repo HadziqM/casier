@@ -29,6 +29,7 @@ export default function Main() {
   const [debt, setDebt] = useState({} as Transaction);
   const [login, setLogin] = useState(false);
   const [logData, setLogData] = useState({} as LoginP);
+  const [newPage, setNewPage] = useState(0);
   const buyEvent = async (data: ModalData, unit: number) => {
     const data_cart = JSON.parse(
       await invoke("buy_update", {
@@ -42,13 +43,42 @@ export default function Main() {
     setProduct(JSON.parse(data_cart.product) as Product);
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
-  const [newPage, setNewPage] = useState(0);
+  const changeEvent = async (data: ModalData, unit: number) => {
+    const data_cart = JSON.parse(
+      await invoke("buy_update", {
+        host: logData.host,
+        port: logData.port,
+        rest: data.stock - unit,
+        unit: unit,
+        id: data.id,
+      })
+    ) as BuyData;
+    setProduct(JSON.parse(data_cart.product) as Product);
+    setCart(JSON.parse(data_cart.cart) as Cart);
+  };
+  const deleteEvent = async (data: ModalData, unit: number) => {
+    const data_cart = JSON.parse(
+      await invoke("delete_update", {
+        host: logData.host,
+        port: logData.port,
+        unit: unit + data.stock,
+        id: data.cid,
+        pid: data.id,
+      })
+    ) as BuyData;
+    setProduct(JSON.parse(data_cart.product) as Product);
+    setCart(JSON.parse(data_cart.cart) as Cart);
+  };
   const changePage = (index: number) => setNewPage(index);
   const idkItis = () => {
     const newList = [
       <Overview />,
       <ProductSc product={product} handleEvent={buyEvent} />,
-      <CartSc data={cart} />,
+      <CartSc
+        data={cart}
+        handleDelete={deleteEvent}
+        handleChange={changeEvent}
+      />,
       <PrintSc />,
       <DebtSc />,
     ];

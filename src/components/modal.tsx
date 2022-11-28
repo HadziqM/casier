@@ -9,7 +9,7 @@ interface Props {
   data: ModalData;
   handleClose: () => void;
   handleEvent: (data: ModalData, unit: number) => Promise<void>;
-  handleDelete?: (data: ModalData) => Promise<void>;
+  handleDelete?: (data: ModalData, unit: number) => Promise<void>;
 }
 
 export default function Modal({
@@ -66,7 +66,7 @@ export default function Modal({
                   className="ml-8 bg-purple-900"
                   onClick={async () => {
                     if (handleDelete == undefined) return;
-                    await handleDelete(data);
+                    await handleDelete(data, unit);
                     handleClose();
                   }}
                 >
