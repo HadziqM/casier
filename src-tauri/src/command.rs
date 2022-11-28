@@ -92,10 +92,6 @@ async fn get_prod_cart(product: crud::Collection, cart: crud::Collection) -> Str
     serde_json::to_string(&output).unwrap()
 }
 #[tauri::command]
-pub fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-#[tauri::command]
 pub async fn list_data(
     collection: String,
     host: String,
@@ -513,4 +509,36 @@ pub async fn cencel_all(host: String, port: i32) -> String {
     } else {
         "{\"error\":400}".to_string()
     }
+}
+#[tauri::command]
+pub async fn change_update(
+    host: String,
+    port: i32,
+    rest: i32,
+    unit: i32,
+    id: String,
+    cid: String,
+) -> String {
+    let product = crud::Collection {
+        host: host.to_owned(),
+        port,
+        collection: "product".to_string(),
+    };
+    let cart = crud::Collection {
+        host: host.to_owned(),
+        port,
+        collection: "cart".to_string(),
+    };
+    product
+        .update(
+            id.to_owned(),
+            ["{\"stock\":", rest.to_string().as_ref(), "}"].concat(),
+        )
+        .await;
+    cart.update(
+        cid.to_owned(),
+        ["{\"unit\":", unit.to_string().as_ref(), "}"].concat(),
+    )
+    .await;
+    get_prod_cart(product, cart).await
 }

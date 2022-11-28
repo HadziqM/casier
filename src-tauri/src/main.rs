@@ -21,7 +21,6 @@ fn main() {
             command::create_data,
             command::list_data,
             command::select_data,
-            command::greet,
             command::delete_data,
             command::update_data,
             command::update_or_create,
@@ -31,7 +30,9 @@ fn main() {
             command::transaction_all,
             command::debt_collected,
             command::get_all_data,
-            command::delete_update
+            command::delete_update,
+            command::change_update,
+            command::cencel_all
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {

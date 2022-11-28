@@ -44,13 +44,15 @@ export default function Main() {
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
   const changeEvent = async (data: ModalData, unit: number) => {
+    const fullUnit = Number(data.unit) + data.stock;
     const data_cart = JSON.parse(
-      await invoke("buy_update", {
+      await invoke("change_update", {
         host: logData.host,
         port: logData.port,
-        rest: data.stock - unit,
+        rest: fullUnit - unit,
         unit: unit,
         id: data.id,
+        cid: data.cid,
       })
     ) as BuyData;
     setProduct(JSON.parse(data_cart.product) as Product);
