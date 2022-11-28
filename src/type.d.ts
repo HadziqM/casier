@@ -127,4 +127,6 @@ export interface ModalData{
   stock:number
   price:number
   id:string
+  unit?:number
+  cid?:string
 }

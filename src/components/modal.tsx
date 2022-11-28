@@ -5,12 +5,20 @@ import { currency } from "../lib/math";
 import Backdrop from "./backdrop";
 
 interface Props {
+  cart?: true;
   data: ModalData;
   handleClose: () => void;
   handleEvent: (data: ModalData, unit: number) => Promise<void>;
+  handleDelete?: (data: ModalData) => Promise<void>;
 }
 
-export default function Modal({ handleClose, data, handleEvent }: Props) {
+export default function Modal({
+  handleClose,
+  data,
+  handleEvent,
+  cart,
+  handleDelete,
+}: Props) {
   const dropIn = {
     hiden: { y: "-100vh", opacity: 0 },
     visible: {
@@ -25,7 +33,7 @@ export default function Modal({ handleClose, data, handleEvent }: Props) {
     },
     exit: { y: "100vh", opacity: 0 },
   };
-  const [unit, setUnit] = useState(1);
+  const [unit, setUnit] = useState(cart ? Number(data.unit) : 0);
   const add_unit = () => {
     unit < data.stock && setUnit(unit + 1);
   };
@@ -52,6 +60,20 @@ export default function Modal({ handleClose, data, handleEvent }: Props) {
               <button onClick={() => add_unit()}>➕</button>
               <button onClick={() => sub_unit()}>➖</button>
             </div>
+            {cart && (
+              <div>
+                <button
+                  className="ml-8 bg-purple-900"
+                  onClick={async () => {
+                    if (handleDelete == undefined) return;
+                    await handleDelete(data);
+                    handleClose();
+                  }}
+                >
+                  🔥 Delete
+                </button>
+              </div>
+            )}
           </div>
           <p>Total = {currency(data.price * unit)}</p>
         </div>
@@ -63,7 +85,7 @@ export default function Modal({ handleClose, data, handleEvent }: Props) {
             }}
             className="px-2 py-[0.1rem] rounded-full bg-purple-800 hover:bg-purple-600 my-1"
           >
-            🛒 Beli
+            {cart ? "✏️ Ubah" : "🛒 Beli"}
           </button>
           <button
             onClick={() => handleClose()}
