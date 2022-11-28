@@ -425,3 +425,36 @@ pub async fn get_all_data(host: String, port: i32) -> String {
     };
     serde_json::to_string(&full_data).unwrap()
 }
+#[tauri::command]
+pub async fn delete_update(host: String, port: i32, id: String, unit: i32, pid: String) -> String {
+    let cart = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "cart".to_string(),
+    };
+    let product = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "product".to_string(),
+    };
+    cart.delete(String::from(&id)).await;
+    product
+        .update(
+            pid,
+            ["{\"stock\":", unit.to_string().as_ref(), "}"].concat(),
+        )
+        .await;
+
+    #[derive(Serialize)]
+    struct ProductCart {
+        product: String,
+        cart: String,
+    }
+    let output = ProductCart {
+        product: product.list_all(Some("sort=name".to_string())).await,
+        cart: cart
+            .list(Some("sort=-created&expand=product".to_string()))
+            .await,
+    };
+    serde_json::to_string(&output).unwrap()
+}

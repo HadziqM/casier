@@ -30,7 +30,8 @@ fn main() {
             command::buy_update,
             command::transaction_all,
             command::debt_collected,
-            command::get_all_data
+            command::get_all_data,
+            command::delete_update
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
