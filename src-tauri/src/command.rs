@@ -470,7 +470,7 @@ pub async fn cencel_all(host: String, port: i32) -> String {
     }
     #[derive(Deserialize)]
     struct CartExpand {
-        product: Vec<CartProduct>,
+        product: CartProduct,
     }
     #[derive(Deserialize)]
     struct CartItem {
@@ -482,12 +482,8 @@ pub async fn cencel_all(host: String, port: i32) -> String {
     struct CartList {
         items: Option<Vec<CartItem>>,
     }
-    let cart_data: CartList = serde_json::from_str(
-        &cart
-            .list(Some("sort=-created&expand=product".to_string()))
-            .await,
-    )
-    .unwrap();
+    let cart_data: CartList =
+        serde_json::from_str(&cart.list(Some("expand=product".to_string())).await).unwrap();
     if cart_data.items.is_some() {
         for cart_list in &cart_data.items.unwrap() {
             product
@@ -495,7 +491,7 @@ pub async fn cencel_all(host: String, port: i32) -> String {
                     cart_list.product.to_owned(),
                     [
                         "{\"stock\":",
-                        (cart_list.unit + cart_list.expand.product[0].stock)
+                        (cart_list.unit + cart_list.expand.product.stock)
                             .to_string()
                             .as_ref(),
                         "}",

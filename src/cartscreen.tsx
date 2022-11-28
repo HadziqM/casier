@@ -9,9 +9,15 @@ interface Prop {
   data: Cart;
   handleChange: (data: ModalData, unit: number) => Promise<void>;
   handleDelete: (data: ModalData, unit: number) => Promise<void>;
+  handleCencel: () => Promise<void>;
 }
 
-export default function CartSc({ data, handleChange, handleDelete }: Prop) {
+export default function CartSc({
+  data,
+  handleChange,
+  handleDelete,
+  handleCencel,
+}: Prop) {
   const [modalView, setModalView] = useState(false);
   const [cartData, setCartData] = useState({} as ModalData);
   const total = () => {
@@ -20,7 +26,12 @@ export default function CartSc({ data, handleChange, handleDelete }: Prop) {
       .reduce((a, b) => a + b, 0);
   };
   return (
-    <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
+    <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center gap-4">
+      <div className="">
+        <button className="" onClick={async () => await handleCencel()}>
+          Kosongkan
+        </button>
+      </div>
       <Table useCase="cart">
         {data.items?.map((e) => (
           <Card

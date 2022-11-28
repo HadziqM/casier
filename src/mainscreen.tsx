@@ -71,6 +71,16 @@ export default function Main() {
     setProduct(JSON.parse(data_cart.product) as Product);
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
+  const cencelEvent = async () => {
+    const data_cart = JSON.parse(
+      await invoke("cencel_all", {
+        host: logData.host,
+        port: logData.port,
+      })
+    ) as BuyData;
+    setProduct(JSON.parse(data_cart.product) as Product);
+    setCart(JSON.parse(data_cart.cart) as Cart);
+  };
   const changePage = (index: number) => setNewPage(index);
   const idkItis = () => {
     const newList = [
@@ -80,6 +90,7 @@ export default function Main() {
         data={cart}
         handleDelete={deleteEvent}
         handleChange={changeEvent}
+        handleCencel={cencelEvent}
       />,
       <PrintSc />,
       <DebtSc />,
