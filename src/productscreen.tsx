@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Search from "./components/searchbar";
 import Card from "./components/productdata";
 import Modal from "./components/modal";
 import { ModalData, Product } from "./type";
@@ -20,13 +21,26 @@ export default function ProductSc({ product, handleEvent }: Props) {
   const [count, setCount] = useState(product.totalItems || 0);
   const [modalView, setModalView] = useState(false);
   const [prod, setProd] = useState({} as ProdData);
-
+  const [viewed, setViewed] = useState(product.items);
   return (
     <>
       <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
         <p>{product.totalItems || 0}</p>
+        <Search
+          get_list={(data: string) => {
+            if (data === "") {
+              setViewed(product.items);
+            } else {
+              setViewed(
+                viewed?.filter((e) =>
+                  e.name.toLowerCase().startsWith(data.toLowerCase())
+                )
+              );
+            }
+          }}
+        />
         <Table useCase={"product"}>
-          {product.items?.map((e) => (
+          {viewed?.map((e) => (
             <Card
               useCase={"product"}
               name={e.name}
