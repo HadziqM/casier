@@ -198,23 +198,30 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
     };
     #[derive(Deserialize)]
     struct CheckId {
-        code: Option<i32>,
-        id: Option<String>,
-        stock: Option<i32>,
+        id: String,
+        unit: i32,
     }
-    let cart_check: CheckId =
-        serde_json::from_str(&second.select(String::from(&id)).await).unwrap();
-    if cart_check.code.is_some() {
+    #[derive(Deserialize)]
+    struct Checked {
+        items: Vec<CheckId>,
+    }
+    let cart_check: Checked = serde_json::from_str(
+        &second
+            .list(Some(format!("filter=(product='{}')", &id)))
+            .await,
+    )
+    .unwrap();
+    if cart_check.items.len() == 0 {
         second
             .create(serde_json::to_string(&data_cart).unwrap())
             .await;
     } else {
         second
             .update(
-                String::from(&cart_check.id.unwrap()),
+                String::from(&cart_check.items[0].id),
                 [
-                    "{\"stock\":",
-                    (cart_check.stock.unwrap() + unit).to_string().as_ref(),
+                    "{\"unit\":",
+                    (cart_check.items[0].unit + unit).to_string().as_ref(),
                     "}",
                 ]
                 .concat(),

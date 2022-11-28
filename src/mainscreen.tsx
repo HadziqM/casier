@@ -42,24 +42,25 @@ export default function Main() {
     setProduct(JSON.parse(data_cart.product) as Product);
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
-  const pageList = [
-    <Overview />,
-    <ProductSc product={product} handleEvent={buyEvent} />,
-    <CartSc data={cart} />,
-    <PrintSc />,
-    <DebtSc />,
-  ];
-  const [page, setPage] = useState(pageList[0]);
-  const changePage = (index: number) => setPage(pageList[index]);
-  useEffect(() => {
-    changePage(1);
-  }, [product]);
+  const [newPage, setNewPage] = useState(0);
+  const changePage = (index: number) => setNewPage(index);
+  const idkItis = () => {
+    const newList = [
+      <Overview />,
+      <ProductSc product={product} handleEvent={buyEvent} />,
+      <CartSc data={cart} />,
+      <PrintSc />,
+      <DebtSc />,
+    ];
+    return newList[newPage];
+  };
   return (
     <>
       {login ? (
         <>
           <Menu clicked={changePage} />
-          {page}
+          {/* {page} */}
+          {idkItis()}
           <div className="flex flex-col items-center absolute bottom-0 right-0">
             <h1>Its main Screen</h1>
             <button onClick={() => setLogin(false)}>Back</button>
@@ -69,7 +70,7 @@ export default function Main() {
         <Login
           logged={() => {
             setLogin(true);
-            setPage(pageList[0]);
+            setNewPage(0);
           }}
           productData={(data: Product) => setProduct(data)}
           cartData={(data: Cart) => setCart(data)}
