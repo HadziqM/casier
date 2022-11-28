@@ -77,6 +77,20 @@ struct ProductUpdated {
     name: Option<String>,
     code: Option<i32>,
 }
+#[derive(Serialize)]
+struct ProductCart {
+    product: String,
+    cart: String,
+}
+async fn get_prod_cart(product: crud::Collection, cart: crud::Collection) -> String {
+    let output = ProductCart {
+        product: product.list_all(Some("sort=name".to_string())).await,
+        cart: cart
+            .list(Some("sort=-created&expand=product".to_string()))
+            .await,
+    };
+    serde_json::to_string(&output).unwrap()
+}
 #[tauri::command]
 pub fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -228,18 +242,7 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
             )
             .await;
     }
-    #[derive(Serialize)]
-    struct ProductCart {
-        product: String,
-        cart: String,
-    }
-    let output = ProductCart {
-        product: user.list_all(Some("sort=name".to_string())).await,
-        cart: second
-            .list(Some("sort=-created&expand=product".to_string()))
-            .await,
-    };
-    serde_json::to_string(&output).unwrap()
+    get_prod_cart(user, second).await
 }
 #[tauri::command]
 pub async fn transaction_all(
@@ -451,17 +454,63 @@ pub async fn delete_update(host: String, port: i32, id: String, unit: i32, pid: 
             ["{\"stock\":", unit.to_string().as_ref(), "}"].concat(),
         )
         .await;
-
-    #[derive(Serialize)]
-    struct ProductCart {
-        product: String,
-        cart: String,
+    get_prod_cart(product, cart).await
+}
+#[tauri::command]
+pub async fn cencel_all(host: String, port: i32) -> String {
+    let cart = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "cart".to_string(),
+    };
+    let product = crud::Collection {
+        host: String::from(&host),
+        port,
+        collection: "product".to_string(),
+    };
+    #[derive(Deserialize)]
+    struct CartProduct {
+        stock: i32,
     }
-    let output = ProductCart {
-        product: product.list_all(Some("sort=name".to_string())).await,
-        cart: cart
+    #[derive(Deserialize)]
+    struct CartExpand {
+        product: Vec<CartProduct>,
+    }
+    #[derive(Deserialize)]
+    struct CartItem {
+        product: String,
+        unit: i32,
+        expand: CartExpand,
+    }
+    #[derive(Deserialize)]
+    struct CartList {
+        items: Option<Vec<CartItem>>,
+    }
+    let cart_data: CartList = serde_json::from_str(
+        &cart
             .list(Some("sort=-created&expand=product".to_string()))
             .await,
-    };
-    serde_json::to_string(&output).unwrap()
+    )
+    .unwrap();
+    if cart_data.items.is_some() {
+        for cart_list in &cart_data.items.unwrap() {
+            product
+                .update(
+                    cart_list.product.to_owned(),
+                    [
+                        "{\"stock\":",
+                        (cart_list.unit + cart_list.expand.product[0].stock)
+                            .to_string()
+                            .as_ref(),
+                        "}",
+                    ]
+                    .concat(),
+                )
+                .await;
+        }
+        cart.delete_all(None).await;
+        get_prod_cart(product, cart).await
+    } else {
+        "{\"error\":400}".to_string()
+    }
 }
