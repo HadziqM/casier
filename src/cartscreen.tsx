@@ -28,12 +28,26 @@ export default function CartSc({
   };
   return (
     <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center gap-4">
-      <div className="">
-        <div>
-          <button className="" onClick={async () => await handleCencel()}>
+      <div className="flex justify-between">
+        <div className="flex items-center w-[600px] justify-between">
+          <button
+            className="bg-purple-700  px-1 py-[2px] text-gray-50"
+            onClick={async () => await handleCencel()}
+          >
             Kosongkan
           </button>
-          <button onClick={() => setBought(true)}>Beli</button>
+          <div className="flex gap-4">
+            <h1 className="font-bold">Total</h1>
+            <p className="w-[200px] bg-[rgba(30,0,30,0.5)] p-[3px] rounded-md text-center">
+              {currency(total() || 0)}
+            </p>
+          </div>
+          <button
+            className="bg-purple-700 px-1 py-[2px] text-gray-50"
+            onClick={() => setBought(true)}
+          >
+            Beli
+          </button>
         </div>
       </div>
       <Table useCase="cart">
@@ -57,7 +71,6 @@ export default function CartSc({
           />
         ))}
       </Table>
-      <div>{currency(total() || 0)}</div>
       <AnimatePresence
         initial={false}
         exitBeforeEnter

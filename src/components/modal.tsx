@@ -35,7 +35,11 @@ export default function Modal({
     },
     exit: { y: "100vh", opacity: 0 },
   };
-  const [paid, setPaid] = useState("" as unknown as number);
+  const paidForm = useRef<HTMLInputElement | null>(null);
+  const nameForm = useRef<HTMLInputElement | null>(null);
+  const addressFrom = useRef<HTMLInputElement | null>(null);
+  const dateForm = useRef<HTMLInputElement | null>(null);
+  const [paid, setPaid] = useState(0);
   const [unit, setUnit] = useState(cart ? Number(data.unit) : 1);
   const add_unit = () => {
     unit < data.stock && setUnit(unit + 1);
@@ -70,40 +74,53 @@ export default function Modal({
             </h1>
             <div className="flex gap-4">
               <div>
-                <form className="flex flex-col gap-1" onSubmit={handleClose}>
+                <form
+                  className="flex flex-col gap-1"
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    window.alert(
+                      new Date(dateForm.current?.value || "").toLocaleString()
+                    );
+                  }}
+                >
                   <div className="flex">
                     <label className="w-[100px] mr-4">Nama</label>
                     <input
                       id="name"
+                      ref={nameForm}
                       type={"text"}
                       required
                       placeholder="Isi Nama Pelanggan"
-                      className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
                     />
                   </div>
                   <div className="flex">
                     <label className="w-[100px] mr-4">Alamat</label>
                     <input
                       id="alamat"
+                      ref={addressFrom}
                       type={"text"}
                       placeholder="Tidak harus diisi"
-                      className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
                     />
                   </div>
                   <div className="flex">
                     <label className="w-[100px] mr-4">Dibayar</label>
                     <input
+                      required
                       id="total"
                       type={"number"}
-                      value={paid}
-                      onChange={(e) => setPaid(Number(e.currentTarget.value))}
+                      ref={paidForm}
+                      onChange={(e) => {
+                        setPaid(Number(e.currentTarget.value));
+                      }}
                       placeholder="Dalam Rupiah"
-                      className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
                     />
                   </div>
                   <div className="flex">
                     <label className="w-[100px] mr-4">Tenggak*</label>
-                    <input id="tenggang" type={"date"} />
+                    <input id="tenggang" type={"date"} ref={dateForm} />
                     <div className="ml-2">
                       <p className="text-[0.7rem]">Apabila hutang</p>
                       <p className="text-[0.7rem]">(Tidak harus diisi)</p>
@@ -114,7 +131,7 @@ export default function Modal({
                       className="px-2 py-[0.1rem] rounded-full bg-purple-900 hover:bg-purple-600 my-1"
                       type="submit"
                     >
-                      ❕Beli
+                      🛒 Beli
                     </button>
                   </div>
                 </form>
