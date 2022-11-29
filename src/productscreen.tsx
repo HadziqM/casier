@@ -19,9 +19,13 @@ export default function ProductSc({ product, handleEvent }: Props) {
   const category = ["All", ...new Set(product.items?.map((e) => e.category))];
   const [selected, setSelected] = useState("All");
   const [filtered, setFiltered] = useState(product.items);
-  const [count, setCount] = useState(product.totalItems || 0);
   const [modalView, setModalView] = useState(false);
   const [prod, setProd] = useState({} as ProdData);
+  useEffect(() => {
+    setFiltered(
+      product.items?.filter((e) => filtered?.map((i) => i.id).includes(e.id))
+    );
+  }, [product]);
   return (
     <>
       <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center gap-2">
@@ -35,10 +39,8 @@ export default function ProductSc({ product, handleEvent }: Props) {
                   (i) => i.category == e.currentTarget.value
                 );
                 setFiltered(filter);
-                setCount(filter?.length || 0);
               } else {
                 setFiltered(product.items);
-                setCount(product.totalItems || 0);
               }
               setSelected(e.currentTarget.value);
             }}
@@ -54,7 +56,7 @@ export default function ProductSc({ product, handleEvent }: Props) {
               Total Items:
             </h2>
             <p className="w-[100px] p-1 bg-[rgba(30,0,30,0.5)] rounded-md text-center text-gray-100">
-              {count}
+              {filtered?.length || 0}
             </p>
           </div>
           <Search

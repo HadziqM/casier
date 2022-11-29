@@ -187,6 +187,7 @@ pub async fn delete_all(
 }
 #[tauri::command]
 pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
+    println!("{}", rest);
     let user = crud::Collection {
         host: String::from(&host),
         port,

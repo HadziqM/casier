@@ -33,7 +33,7 @@ export default function Modal({
     },
     exit: { y: "100vh", opacity: 0 },
   };
-  const [unit, setUnit] = useState(cart ? Number(data.unit) : 0);
+  const [unit, setUnit] = useState(cart ? Number(data.unit) : 1);
   const add_unit = () => {
     unit < data.stock && setUnit(unit + 1);
   };
