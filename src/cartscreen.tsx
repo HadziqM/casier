@@ -20,6 +20,7 @@ export default function CartSc({
 }: Prop) {
   const [modalView, setModalView] = useState(false);
   const [cartData, setCartData] = useState({} as ModalData);
+  const [bought, setBought] = useState(false);
   const total = () => {
     return data.items
       ?.map((e) => e.expand.product.price * e.unit)
@@ -28,9 +29,12 @@ export default function CartSc({
   return (
     <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center gap-4">
       <div className="">
-        <button className="" onClick={async () => await handleCencel()}>
-          Kosongkan
-        </button>
+        <div>
+          <button className="" onClick={async () => await handleCencel()}>
+            Kosongkan
+          </button>
+          <button onClick={() => setBought(true)}>Beli</button>
+        </div>
       </div>
       <Table useCase="cart">
         {data.items?.map((e) => (
@@ -64,6 +68,22 @@ export default function CartSc({
             cart
             data={cartData}
             handleClose={() => setModalView(false)}
+            handleEvent={handleChange}
+            handleDelete={handleDelete}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence
+        initial={false}
+        exitBeforeEnter
+        onExitComplete={() => null}
+      >
+        {bought && (
+          <Modal
+            cart
+            buy
+            data={{ name: "idk", stock: 0, price: 0, id: "idk" }}
+            handleClose={() => setBought(false)}
             handleEvent={handleChange}
             handleDelete={handleDelete}
           />

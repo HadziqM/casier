@@ -9,18 +9,12 @@ interface Props {
   product: Product;
   handleEvent: (data: ModalData, unit: number) => Promise<void>;
 }
-interface ProdData {
-  price: number;
-  stock: number;
-  name: string;
-  id: string;
-}
 export default function ProductSc({ product, handleEvent }: Props) {
   const category = ["All", ...new Set(product.items?.map((e) => e.category))];
   const [selected, setSelected] = useState("All");
   const [filtered, setFiltered] = useState(product.items);
   const [modalView, setModalView] = useState(false);
-  const [prod, setProd] = useState({} as ProdData);
+  const [prod, setProd] = useState({} as ModalData);
   useEffect(() => {
     setFiltered(
       product.items?.filter((e) => filtered?.map((i) => i.id).includes(e.id))

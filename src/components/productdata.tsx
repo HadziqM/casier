@@ -7,6 +7,7 @@ interface Props {
 }
 
 import { FaCartPlus, FaEdit, FaPhone } from "react-icons/fa";
+import { currency } from "../lib/math";
 export default function Card(prop: Props) {
   const icon = () => {
     if (prop.useCase == "product") {
@@ -26,7 +27,7 @@ export default function Card(prop: Props) {
         {prop.stock}
       </p>
       <p className="w-[180px] truncate py-[2px] border-r border-purple-900">
-        {`Rp.${prop.price.toLocaleString("id-ID")}`}
+        {currency(prop.price)}
       </p>
       <button
         onClick={prop.selected}
