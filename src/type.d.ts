@@ -131,3 +131,10 @@ export interface ModalData{
   cid?:string
   total?:number
 }
+export interface CustomerData{
+  name:string
+  total:number
+  paid:number
+  company?:string
+  due?:number
+}

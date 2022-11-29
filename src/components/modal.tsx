@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
-import { ModalData } from "../type";
+import { ModalData, CustomerData } from "../type";
 import { currency } from "../lib/math";
 import Backdrop from "./backdrop";
 
@@ -11,10 +11,12 @@ interface Props {
   handleClose: () => void;
   handleEvent: (data: ModalData, unit: number) => Promise<void>;
   handleDelete?: (data: ModalData, unit: number) => Promise<void>;
+  handleSubmit?: (data: CustomerData) => Promise<void>;
 }
 
 export default function Modal({
   handleClose,
+  handleSubmit,
   data,
   handleEvent,
   cart,
@@ -39,6 +41,7 @@ export default function Modal({
   const nameForm = useRef<HTMLInputElement | null>(null);
   const addressFrom = useRef<HTMLInputElement | null>(null);
   const dateForm = useRef<HTMLInputElement | null>(null);
+  const companyForm = useRef<HTMLInputElement | null>(null);
   const [paid, setPaid] = useState(0);
   const [unit, setUnit] = useState(cart ? Number(data.unit) : 1);
   const add_unit = () => {
@@ -58,7 +61,8 @@ export default function Modal({
     <Backdrop>
       <motion.div
         onClick={(e) => e.stopPropagation}
-        className="w-[clamp(50%,700px,90%)] h-[min(50%,300px)] m-auto p-8 rounded-xl flex flex-col items-center bg-[#404] text-gray-300 z-50 justify-between relative"
+        className="w-[clamp(50%,700px,90%)] m-auto p-8 rounded-xl flex flex-col items-center bg-[#404] text-gray-300 z-50 justify-between relative"
+        style={{ height: buy ? "350px" : "300px" }}
         variants={dropIn}
         initial="hiden"
         exit="exit"
@@ -78,9 +82,19 @@ export default function Modal({
                   className="flex flex-col gap-1"
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    window.alert(
-                      new Date(dateForm.current?.value || "").toLocaleString()
-                    );
+                    if (handleSubmit == undefined) return;
+                    await handleSubmit({
+                      name: nameForm.current?.value || "",
+                      total: data.total || 0,
+                      paid: Number(paidForm.current?.value),
+                      company: companyForm.current?.value,
+                      due: dateForm.current?.value
+                        ? Math.floor(
+                            new Date(dateForm.current?.value || "").getTime() /
+                              1000
+                          )
+                        : undefined,
+                    });
                   }}
                 >
                   <div className="flex">
@@ -99,6 +113,16 @@ export default function Modal({
                     <input
                       id="alamat"
                       ref={addressFrom}
+                      type={"text"}
+                      placeholder="Tidak harus diisi"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                    />
+                  </div>
+                  <div className="flex">
+                    <label className="w-[100px] mr-4">Perusahaan</label>
+                    <input
+                      id="company"
+                      ref={companyForm}
                       type={"text"}
                       placeholder="Tidak harus diisi"
                       className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
@@ -145,7 +169,7 @@ export default function Modal({
                 <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
                   {currency(paid)}
                 </p>
-                <h1 className="text-[0.8rem]">Kembalian</h1>
+                <h1 className="text-[0.8rem]">Kurang</h1>
                 <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
                   {change((data.total || 0) - paid)}
                 </p>
@@ -157,7 +181,7 @@ export default function Modal({
             <h1 className="uppercase text-[1.5rem] font-bold">
               {cart ? "Edit Cart" : "Add to Cart"}
             </h1>
-            <p>{data.name}</p>
+            <p className="p-2 bg-[rgba(30,0,30,1)] rounded-md">{data.name}</p>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4 justify-center">
                 <span className="bg-[#202] rounded-[30%] p-2 w-[60px] text-center">
