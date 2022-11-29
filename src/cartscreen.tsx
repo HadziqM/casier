@@ -1,5 +1,5 @@
 import Table from "./components/table";
-import { Cart, ModalData } from "./type";
+import { Cart, CustomerData, ModalData } from "./type";
 import Modal from "./components/modal";
 import { currency } from "./lib/math";
 import Card from "./components/productdata";
@@ -10,6 +10,7 @@ interface Prop {
   handleChange: (data: ModalData, unit: number) => Promise<void>;
   handleDelete: (data: ModalData, unit: number) => Promise<void>;
   handleCencel: () => Promise<void>;
+  handleSubmit: (data: CustomerData) => Promise<void>;
 }
 
 export default function CartSc({
@@ -17,6 +18,7 @@ export default function CartSc({
   handleChange,
   handleDelete,
   handleCencel,
+  handleSubmit,
 }: Prop) {
   const [modalView, setModalView] = useState(false);
   const [cartData, setCartData] = useState({} as ModalData);
@@ -105,6 +107,7 @@ export default function CartSc({
             handleClose={() => setBought(false)}
             handleEvent={handleChange}
             handleDelete={handleDelete}
+            handleSubmit={handleSubmit}
           />
         )}
       </AnimatePresence>

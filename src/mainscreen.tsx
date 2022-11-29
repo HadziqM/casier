@@ -1,6 +1,13 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { Product, Cart, Transaction, ModalData, BuyData } from "./type";
+import {
+  Product,
+  Cart,
+  Transaction,
+  ModalData,
+  BuyData,
+  CustomerData,
+} from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
 import Overview from "./overviewscreen";
@@ -8,7 +15,6 @@ import CartSc from "./cartscreen";
 import PrintSc from "./printsreen";
 import DebtSc from "./debtscreen";
 import ProductSc from "./productscreen";
-import React from "react";
 
 interface LoginP {
   host: string;
@@ -81,7 +87,21 @@ export default function Main() {
     setProduct(JSON.parse(data_cart.product) as Product);
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
-  const changePage = (index: number) => setNewPage(index);
+  const submitEvent = async (data: CustomerData) => {
+    const data_cart = JSON.parse(
+      await invoke("transaction_all", {
+        host: logData.host,
+        port: logData.port,
+        name: data.name,
+        paid: data.paid,
+        address: undefined,
+        company: data.company,
+        due: data.due,
+      })
+    ) as BuyData;
+    setProduct(JSON.parse(data_cart.product) as Product);
+    setCart(JSON.parse(data_cart.cart) as Cart);
+  };
   const idkItis = () => {
     const newList = [
       <Overview />,
@@ -91,6 +111,7 @@ export default function Main() {
         handleDelete={deleteEvent}
         handleChange={changeEvent}
         handleCencel={cencelEvent}
+        handleSubmit={submitEvent}
       />,
       <PrintSc />,
       <DebtSc />,
@@ -101,7 +122,7 @@ export default function Main() {
     <>
       {login ? (
         <>
-          <Menu clicked={changePage} />
+          <Menu clicked={(index: number) => setNewPage(index)} />
           {/* {page} */}
           {idkItis()}
           <div className="flex flex-col items-center absolute bottom-0 right-0">

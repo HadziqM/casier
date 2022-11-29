@@ -90,11 +90,11 @@ export default function Modal({
                       company: companyForm.current?.value,
                       due: dateForm.current?.value
                         ? Math.floor(
-                            new Date(dateForm.current?.value || "").getTime() /
-                              1000
+                            new Date(dateForm.current.value).getTime() / 1000
                           )
                         : undefined,
                     });
+                    handleClose();
                   }}
                 >
                   <div className="flex">
