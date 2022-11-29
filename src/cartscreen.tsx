@@ -82,7 +82,13 @@ export default function CartSc({
           <Modal
             cart
             buy
-            data={{ name: "idk", stock: 0, price: 0, id: "idk" }}
+            data={{
+              name: "idk",
+              stock: 0,
+              price: 0,
+              id: "idk",
+              total: total() || 0,
+            }}
             handleClose={() => setBought(false)}
             handleEvent={handleChange}
             handleDelete={handleDelete}

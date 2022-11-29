@@ -129,4 +129,5 @@ export interface ModalData{
   id:string
   unit?:number
   cid?:string
+  total?:number
 }

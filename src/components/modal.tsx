@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ModalData } from "../type";
 import { currency } from "../lib/math";
 import Backdrop from "./backdrop";
@@ -35,12 +35,20 @@ export default function Modal({
     },
     exit: { y: "100vh", opacity: 0 },
   };
+  const [paid, setPaid] = useState("" as unknown as number);
   const [unit, setUnit] = useState(cart ? Number(data.unit) : 1);
   const add_unit = () => {
     unit < data.stock && setUnit(unit + 1);
   };
   const sub_unit = () => {
     unit > 1 && setUnit(unit - 1);
+  };
+  const change = (num: number) => {
+    if (num > 0) {
+      return currency(num);
+    } else if (num == 0) {
+      return "PAS";
+    } else return "Kelebihan " + currency(num * -1);
   };
   return (
     <Backdrop>
@@ -87,6 +95,8 @@ export default function Modal({
                     <input
                       id="total"
                       type={"number"}
+                      value={paid}
+                      onChange={(e) => setPaid(Number(e.currentTarget.value))}
                       placeholder="Dalam Rupiah"
                       className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
                     />
@@ -109,10 +119,19 @@ export default function Modal({
                   </div>
                 </form>
               </div>
-              <div>
-                <h1>Total</h1>
-                <h1>Dibayar</h1>
-                <h1>Kembalian</h1>
+              <div className="gap-2 flex flex-col border-l-2 border-purple-600 pl-2">
+                <h1 className="text-[0.8rem]">Total</h1>
+                <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
+                  {currency(data.total || 0)}
+                </p>
+                <h1 className="text-[0.8rem]">Dibayar</h1>
+                <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
+                  {currency(paid)}
+                </p>
+                <h1 className="text-[0.8rem]">Kembalian</h1>
+                <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
+                  {change((data.total || 0) - paid)}
+                </p>
               </div>
             </div>
           </>
