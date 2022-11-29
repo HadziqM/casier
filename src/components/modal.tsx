@@ -46,7 +46,7 @@ export default function Modal({
     <Backdrop>
       <motion.div
         onClick={(e) => e.stopPropagation}
-        className="w-[clamp(50%,700px,90%)] h-[min(50%,300px)] m-auto p-8 rounded-xl flex flex-col items-center bg-[#404] text-gray-300 z-50 justify-between"
+        className="w-[clamp(50%,700px,90%)] h-[min(50%,300px)] m-auto p-8 rounded-xl flex flex-col items-center bg-[#404] text-gray-300 z-50 justify-between relative"
         variants={dropIn}
         initial="hiden"
         exit="exit"
@@ -54,55 +54,67 @@ export default function Modal({
       >
         {buy ? (
           <>
-            <h1>Masukkan Data Pelanggan</h1>
-            <form className="flex flex-col gap-1" onSubmit={handleClose}>
-              <div className="flex">
-                <label className="w-[100px] mr-4">Nama</label>
-                <input
-                  id="name"
-                  type={"text"}
-                  required
-                  placeholder="Isi Nama Pelanggan"
-                  className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
-                />
+            <button className="absolute top-1 right-1" onClick={handleClose}>
+              ❌
+            </button>
+            <h1 className="font-bold text-[1.2rem] mb-2">
+              Masukkan Data Pelanggan
+            </h1>
+            <div className="flex gap-4">
+              <div>
+                <form className="flex flex-col gap-1" onSubmit={handleClose}>
+                  <div className="flex">
+                    <label className="w-[100px] mr-4">Nama</label>
+                    <input
+                      id="name"
+                      type={"text"}
+                      required
+                      placeholder="Isi Nama Pelanggan"
+                      className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                    />
+                  </div>
+                  <div className="flex">
+                    <label className="w-[100px] mr-4">Alamat</label>
+                    <input
+                      id="alamat"
+                      type={"text"}
+                      placeholder="Tidak harus diisi"
+                      className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                    />
+                  </div>
+                  <div className="flex">
+                    <label className="w-[100px] mr-4">Dibayar</label>
+                    <input
+                      id="total"
+                      type={"number"}
+                      placeholder="Dalam Rupiah"
+                      className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                    />
+                  </div>
+                  <div className="flex">
+                    <label className="w-[100px] mr-4">Tenggak*</label>
+                    <input id="tenggang" type={"date"} />
+                    <div className="ml-2">
+                      <p className="text-[0.7rem]">Apabila hutang</p>
+                      <p className="text-[0.7rem]">(Tidak harus diisi)</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-8 justify-center w-full mt-2">
+                    <button
+                      className="px-2 py-[0.1rem] rounded-full bg-purple-900 hover:bg-purple-600 my-1"
+                      type="submit"
+                    >
+                      ❕Beli
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div className="flex">
-                <label className="w-[100px] mr-4">Alamat</label>
-                <input
-                  id="alamat"
-                  type={"text"}
-                  placeholder="Tidak harus diisi"
-                  className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
-                />
+              <div>
+                <h1>Total</h1>
+                <h1>Dibayar</h1>
+                <h1>Kembalian</h1>
               </div>
-              <div className="flex">
-                <label className="w-[100px] mr-4">Dibayar</label>
-                <input
-                  id="total"
-                  type={"number"}
-                  placeholder="Dalam Rupiah"
-                  className="p-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
-                />
-              </div>
-              <div className="flex">
-                <label className="w-[100px] mr-4">Tenggang</label>
-                <input id="tenggang" type={"date"} />
-              </div>
-              <div className="flex gap-8 justify-center w-full mt-4">
-                <button
-                  className="px-2 py-[0.1rem] rounded-full bg-purple-900 hover:bg-purple-600 my-1"
-                  type="submit"
-                >
-                  ❕Beli
-                </button>
-                <button
-                  className="px-2 py-[0.1rem] rounded-full bg-purple-900 hover:bg-purple-600 my-1"
-                  onClick={handleClose}
-                >
-                  ❌ Close
-                </button>
-              </div>
-            </form>
+            </div>
           </>
         ) : (
           <>
