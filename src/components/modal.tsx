@@ -42,7 +42,7 @@ export default function Modal({
   const nameForm = useRef<HTMLInputElement | null>(null);
   const addressFrom = useRef<HTMLInputElement | null>(null);
   const dateForm = useRef<HTMLInputElement | null>(null);
-  const companyForm = useRef<HTMLInputElement | null>(null);
+  const telpForm = useRef<HTMLInputElement | null>(null);
   const [paid, setPaid] = useState(0);
   const [unit, setUnit] = useState(cart ? Number(data.unit) : 1);
   const add_unit = () => {
@@ -99,7 +99,7 @@ export default function Modal({
                         total: data.total || 0,
                         paid:
                           (data.total || 0) - paid < 0 ? data.total || 0 : paid,
-                        company: companyForm.current?.value,
+                        telp: telpForm.current?.value,
                         due: dateForm.current?.value
                           ? Math.floor(
                               new Date(dateForm.current.value).getTime() / 1000
@@ -120,8 +120,8 @@ export default function Modal({
                       ref={nameForm}
                       type={"text"}
                       required
-                      placeholder="Isi Nama Pelanggan"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      placeholder="Isi Nama Pelanggan/Perusahaan"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
                     />
                   </div>
                   <div className="flex">
@@ -131,17 +131,17 @@ export default function Modal({
                       ref={addressFrom}
                       type={"text"}
                       placeholder="Tidak harus diisi"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
                     />
                   </div>
                   <div className="flex">
-                    <label className="w-[100px] mr-4">Perusahaan</label>
+                    <label className="w-[100px] mr-4">No.Telepon</label>
                     <input
-                      id="company"
-                      ref={companyForm}
-                      type={"text"}
+                      id="telp"
+                      ref={telpForm}
+                      type={"tel"}
                       placeholder="Tidak harus diisi"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
                     />
                   </div>
                   <div className="flex">
@@ -155,7 +155,7 @@ export default function Modal({
                         setPaid(Number(e.currentTarget.value));
                       }}
                       placeholder="Dalam Rupiah"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.8rem]"
+                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
                     />
                   </div>
                   <div className="flex">

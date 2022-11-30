@@ -83,7 +83,7 @@ export interface Transaction{
     debt:number
     due:string
     total:number
-    product:string
+    product:string[]
     expand:{
       customer:{
         name:string
@@ -139,7 +139,7 @@ export interface CustomerData{
   name:string
   total:number
   paid:number
-  company?:string
+  telp?:string
   due?:number
   adrress?:string
 }

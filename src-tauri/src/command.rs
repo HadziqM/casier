@@ -60,6 +60,7 @@ struct TransactionCreate {
     full: bool,
     debt: Option<i128>,
     due: Option<i128>,
+    telephone: Option<String>,
 }
 #[derive(Serialize, Deserialize)]
 struct TransactionList {
@@ -304,9 +305,10 @@ pub async fn transaction_all(
     paid: i128,
     total: i128,
     address: Option<String>,
-    company: Option<String>,
+    telp: Option<String>,
     due: Option<i128>,
 ) -> String {
+    println!("invoked");
     let customer_struct = crud::Collection {
         host: String::from(&host),
         port,
@@ -392,21 +394,21 @@ pub async fn transaction_all(
                 .await,
         );
     }
-    //Create Company Data if given on Input
-    if company.is_some() {
-        let company_struct = crud::Collection {
-            host: String::from(&host),
-            port,
-            collection: "company".to_string(),
-        };
-        let company_data = CompanyCreate {
-            name: company.unwrap(),
-            customer: String::from(&new_id),
-        };
-        company_struct
-            .create(serde_json::to_string(&company_data).unwrap())
-            .await;
-    }
+    // //Create Company Data if given on Input
+    // if company.is_some() {
+    //     let company_struct = crud::Collection {
+    //         host: String::from(&host),
+    //         port,
+    //         collection: "company".to_string(),
+    //     };
+    //     let company_data = CompanyCreate {
+    //         name: company.unwrap(),
+    //         customer: String::from(&new_id),
+    //     };
+    //     company_struct
+    //         .create(serde_json::to_string(&company_data).unwrap())
+    //         .await;
+    // }
     //Create Transaction Data Given input
     if total > paid {
         let transaction_data = TransactionCreate {
@@ -417,6 +419,7 @@ pub async fn transaction_all(
             debt: Some(total - paid),
             due,
             product: history_id,
+            telephone: telp.to_owned(),
         };
         transaction_struct
             .create(serde_json::to_string(&transaction_data).unwrap())
@@ -430,6 +433,7 @@ pub async fn transaction_all(
             debt: None,
             due: None,
             product: history_id,
+            telephone: telp.to_owned(),
         };
         transaction_struct
             .create(serde_json::to_string(&transaction_data).unwrap())
