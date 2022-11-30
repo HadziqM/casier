@@ -2,6 +2,7 @@ interface Props {
   name: string;
   price: number;
   stock: number;
+  telp?: string;
   useCase: "product" | "cart" | "debt";
   selected: () => void;
 }
@@ -20,11 +21,13 @@ export default function Card(prop: Props) {
   };
   return (
     <div className="flex text-gray-200 text-[0.8rem] w-[600px] text-center border-b border-purple-900">
-      <p className="w-[300px] truncate py-[2px] border-r border-purple-900 text-left pl-4">
-        {prop.name}
+      <p className="w-[270px] truncate py-[2px] border-r border-purple-900 text-left pl-4">
+        {prop.useCase == "debt" ? `${prop.name} | (${prop.telp})` : prop.name}
       </p>
-      <p className="w-[70px] truncate py-[2px] border-r border-purple-900">
-        {prop.stock}
+      <p className="w-[100px] truncate py-[2px] border-r border-purple-900">
+        {prop.useCase == "debt"
+          ? new Date(prop.stock * 1000).toLocaleDateString()
+          : prop.stock}
       </p>
       <p className="w-[180px] truncate py-[2px] border-r border-purple-900">
         {currency(prop.price)}

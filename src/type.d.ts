@@ -80,8 +80,9 @@ export interface Transaction{
     updated:string
     id:string
     full:boolean
-    debt:number
-    due:string
+    debt?:number
+    due?:number
+    telephone:string
     total:number
     product:string[]
     expand:{

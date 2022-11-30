@@ -117,7 +117,7 @@ export default function Main() {
         handleSubmit={submitEvent}
       />,
       <PrintSc />,
-      <DebtSc />,
+      <DebtSc debt={debt} />,
     ];
     return newList[newPage];
   };

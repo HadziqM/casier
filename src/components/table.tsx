@@ -25,10 +25,10 @@ export default function Table({ children, useCase }: Prop) {
     <div className="p-[10px] border-[3px] border-purple-600 rounded-2xl bg-[rgba(30,0,30,0.8)]">
       <div className="relative flex-flex-col w-[632px] h-[380px] overflow-auto">
         <div className="flex w-[600px] top-0 text-gray-200 text-[1rem] text-center bg-purple-600 rounded-t-lg sticky">
-          <p className="w-[300px] truncate py-[2px] border-r border-purple-900">
+          <p className="w-[270px] truncate py-[2px] border-r border-purple-900">
             Nama
           </p>
-          <p className="w-[70px] truncate py-[2px] border-r border-purple-900">
+          <p className="w-[100px] truncate py-[2px] border-r border-purple-900">
             {stock()}
           </p>
           <p className="w-[180px] truncate py-[2px] border-r border-purple-900">
