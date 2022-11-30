@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { ModalData, CustomerData } from "../type";
 import { currency } from "../lib/math";
+import { ask } from "@tauri-apps/api/dialog";
 import Backdrop from "./backdrop";
 
 interface Props {
@@ -83,18 +84,33 @@ export default function Modal({
                   onSubmit={async (e) => {
                     e.preventDefault();
                     if (handleSubmit == undefined) return;
-                    await handleSubmit({
-                      name: nameForm.current?.value || "",
-                      total: data.total || 0,
-                      paid: Number(paidForm.current?.value),
-                      company: companyForm.current?.value,
-                      due: dateForm.current?.value
-                        ? Math.floor(
-                            new Date(dateForm.current.value).getTime() / 1000
-                          )
-                        : undefined,
-                    });
-                    handleClose();
+                    if (
+                      await ask(
+                        (data.total || 0) - paid < 0
+                          ? `pastikan pelanggan sudah membayar dan diberi kembalian ${currency(
+                              paid - (data.total || 0)
+                            )} ok?`
+                          : "pastikan pelanggan sudah membayar ok?",
+                        { title: "Persetujuan", type: "info" }
+                      )
+                    ) {
+                      await handleSubmit({
+                        name: nameForm.current?.value || "",
+                        total: data.total || 0,
+                        paid:
+                          (data.total || 0) - paid < 0 ? data.total || 0 : paid,
+                        company: companyForm.current?.value,
+                        due: dateForm.current?.value
+                          ? Math.floor(
+                              new Date(dateForm.current.value).getTime() / 1000
+                            )
+                          : undefined,
+                        adrress: addressFrom.current?.value,
+                      });
+                      handleClose();
+                    } else {
+                      handleClose();
+                    }
                   }}
                 >
                   <div className="flex">

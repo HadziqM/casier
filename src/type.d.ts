@@ -122,6 +122,10 @@ export interface BuyData{
   product:string,
   cart:string
 }
+export interface TransactionOut{
+  cart:string
+  debt:string
+}
 export interface ModalData{
   name:string
   stock:number
@@ -137,4 +141,5 @@ export interface CustomerData{
   paid:number
   company?:string
   due?:number
+  adrress?:string
 }

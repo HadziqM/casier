@@ -7,6 +7,7 @@ import {
   ModalData,
   BuyData,
   CustomerData,
+  TransactionOut,
 } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
@@ -94,12 +95,12 @@ export default function Main() {
         port: logData.port,
         name: data.name,
         paid: data.paid,
-        address: undefined,
+        address: data.adrress,
         company: data.company,
         due: data.due,
       })
-    ) as BuyData;
-    setProduct(JSON.parse(data_cart.product) as Product);
+    ) as TransactionOut;
+    setDebt(JSON.parse(data_cart.debt) as Transaction);
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
   const idkItis = () => {

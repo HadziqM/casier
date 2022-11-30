@@ -334,6 +334,7 @@ pub async fn transaction_all(
         product: String,
         unit: i32,
     }
+    //Create Transaction History and Delete the Cart
     let mut history_id: Vec<String> = Vec::new();
     let cart_data: CartList = serde_json::from_str(&cart.list_all(None).await).unwrap();
     match cart_data.items {
@@ -357,6 +358,7 @@ pub async fn transaction_all(
         }
         None => return "{\"error\":400}".to_string(),
     }
+    //Check Customer data and Create if Unavailable or Update if Already Available
     let mut customer_data = Customer {
         id: None,
         name: String::from(&name),
@@ -390,6 +392,7 @@ pub async fn transaction_all(
                 .await,
         );
     }
+    //Create Company Data if given on Input
     if company.is_some() {
         let company_struct = crud::Collection {
             host: String::from(&host),
@@ -404,6 +407,7 @@ pub async fn transaction_all(
             .create(serde_json::to_string(&company_data).unwrap())
             .await;
     }
+    //Create Transaction Data Given input
     if total > paid {
         let transaction_data = TransactionCreate {
             customer: String::from(&new_id),
