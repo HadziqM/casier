@@ -27,7 +27,7 @@ fn main() {
             command::get_all,
             command::delete_all,
             command::buy_update,
-            command::transaction_all,
+            command::transaction_all_debt,
             command::debt_collected,
             command::get_all_data,
             command::delete_update,

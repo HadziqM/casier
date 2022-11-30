@@ -54,12 +54,12 @@ struct HistoryCreate {
 #[derive(Serialize, Deserialize)]
 struct TransactionCreate {
     customer: String,
-    total: i128,
-    paid: i128,
+    total: i32,
+    paid: i32,
     product: Vec<String>,
     full: bool,
-    debt: Option<i128>,
-    due: Option<i128>,
+    debt: Option<i32>,
+    due: Option<i32>,
     telephone: Option<String>,
 }
 #[derive(Serialize, Deserialize)]
@@ -297,16 +297,17 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
     }
     get_prod_cart(user, second).await
 }
+
 #[tauri::command]
-pub async fn transaction_all(
+pub async fn transaction_all_debt(
     host: String,
     port: i32,
     name: String,
-    paid: i128,
-    total: i128,
+    paid: i32,
+    total: i32,
     address: Option<String>,
     telp: Option<String>,
-    due: Option<i128>,
+    due: Option<i32>,
 ) -> String {
     println!("invoked");
     let customer_struct = crud::Collection {
@@ -338,7 +339,12 @@ pub async fn transaction_all(
     }
     //Create Transaction History and Delete the Cart
     let mut history_id: Vec<String> = Vec::new();
-    let cart_data: CartList = serde_json::from_str(&cart.list_all(None).await).unwrap();
+    let cart_data: CartList = serde_json::from_str(
+        &cart
+            .list_all(Some("sort=-created&expand=product".to_string()))
+            .await,
+    )
+    .unwrap();
     match cart_data.items {
         Some(items) => {
             for item in &items {
@@ -442,7 +448,7 @@ pub async fn transaction_all(
     get_cart_debt(cart, transaction_struct).await
 }
 #[tauri::command]
-pub async fn debt_collected(host: String, port: i32, id: String, paid: i128) -> String {
+pub async fn debt_collected(host: String, port: i32, id: String, paid: i32) -> String {
     let transaction_struct = crud::Collection {
         host,
         port,

@@ -8,7 +8,7 @@ interface Props {
 }
 
 import { FaCartPlus, FaEdit, FaPhone } from "react-icons/fa";
-import { currency } from "../lib/math";
+import { currency, telepon } from "../lib/math";
 export default function Card(prop: Props) {
   const icon = () => {
     if (prop.useCase == "product") {
@@ -22,7 +22,9 @@ export default function Card(prop: Props) {
   return (
     <div className="flex text-gray-200 text-[0.8rem] w-[600px] text-center border-b border-purple-900">
       <p className="w-[270px] truncate py-[2px] border-r border-purple-900 text-left pl-4">
-        {prop.useCase == "debt" ? `${prop.name} | (${prop.telp})` : prop.name}
+        {prop.useCase == "debt"
+          ? `${prop.name} | (${telepon(prop.telp || "")})`
+          : prop.name}
       </p>
       <p className="w-[100px] truncate py-[2px] border-r border-purple-900">
         {prop.useCase == "debt"

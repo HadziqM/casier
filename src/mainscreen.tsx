@@ -89,17 +89,16 @@ export default function Main() {
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
   const submitEvent = async (data: CustomerData) => {
-    window.alert("there");
     const data_cart = JSON.parse(
-      await invoke("transaction_all", {
+      await invoke("transaction_all_debt", {
         host: logData.host,
         port: logData.port,
         name: data.name,
         paid: data.paid,
         total: data.total,
-        // address: data.adrress || null,
-        // telp: data.telp || null,
-        // due: data.due || null,
+        address: data.adrress,
+        telp: data.telp,
+        due: data.due,
       })
     ) as TransactionOut;
     setDebt(JSON.parse(data_cart.debt) as Transaction);
