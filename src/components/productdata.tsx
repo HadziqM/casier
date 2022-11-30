@@ -7,7 +7,7 @@ interface Props {
   selected: () => void;
 }
 
-import { FaCartPlus, FaEdit, FaPhone } from "react-icons/fa";
+import { FaCartPlus, FaEdit, FaClipboardList } from "react-icons/fa";
 import { currency, telepon } from "../lib/math";
 export default function Card(prop: Props) {
   const icon = () => {
@@ -16,19 +16,25 @@ export default function Card(prop: Props) {
     } else if (prop.useCase == "cart") {
       return <FaEdit className="flex text-purple-400 w-6 h-6" />;
     } else {
-      return <FaPhone className="flex text-purple-400 w-6 h-6" />;
+      return <FaClipboardList className="flex text-purple-400 w-6 h-6" />;
     }
   };
   return (
     <div className="flex text-gray-200 text-[0.8rem] w-[600px] text-center border-b border-purple-900">
       <p className="w-[270px] truncate py-[2px] border-r border-purple-900 text-left pl-4">
-        {prop.useCase == "debt"
-          ? `${prop.name} | (${telepon(prop.telp || "")})`
-          : prop.name}
+        {prop.useCase == "debt" ? (
+          <a href={`https://wa.me/62${prop.telp?.slice(1)}`} target={"_blank"}>
+            {`${prop.name} | (${telepon(prop.telp || "")})`}
+          </a>
+        ) : (
+          prop.name
+        )}
       </p>
       <p className="w-[100px] truncate py-[2px] border-r border-purple-900">
         {prop.useCase == "debt"
-          ? new Date(prop.stock * 1000).toLocaleDateString()
+          ? prop.stock == 0
+            ? "No date"
+            : new Date(prop.stock * 1000).toLocaleDateString()
           : prop.stock}
       </p>
       <p className="w-[180px] truncate py-[2px] border-r border-purple-900">

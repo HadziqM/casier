@@ -105,8 +105,6 @@ export default function CartSc({
               total: total() || 0,
             }}
             handleClose={() => setBought(false)}
-            handleEvent={handleChange}
-            handleDelete={handleDelete}
             handleSubmit={handleSubmit}
           />
         )}

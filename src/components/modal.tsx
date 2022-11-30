@@ -1,21 +1,25 @@
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
-import { ModalData, CustomerData } from "../type";
+import { ModalData, CustomerData, DebtData } from "../type";
 import { currency } from "../lib/math";
 import { ask } from "@tauri-apps/api/dialog";
 import Backdrop from "./backdrop";
 
 interface Props {
+  debt?: true;
+  debtData?: DebtData;
   cart?: true;
   buy?: true;
-  data: ModalData;
+  data?: ModalData;
   handleClose: () => void;
-  handleEvent: (data: ModalData, unit: number) => Promise<void>;
+  handleEvent?: (data: ModalData, unit: number) => Promise<void>;
   handleDelete?: (data: ModalData, unit: number) => Promise<void>;
   handleSubmit?: (data: CustomerData) => Promise<void>;
 }
 
 export default function Modal({
+  debt,
+  debtData,
   handleClose,
   handleSubmit,
   data,
@@ -44,9 +48,9 @@ export default function Modal({
   const dateForm = useRef<HTMLInputElement | null>(null);
   const telpForm = useRef<HTMLInputElement | null>(null);
   const [paid, setPaid] = useState(0);
-  const [unit, setUnit] = useState(cart ? Number(data.unit) : 1);
+  const [unit, setUnit] = useState(cart ? Number(data?.unit) : 1);
   const add_unit = () => {
-    unit < data.stock && setUnit(unit + 1);
+    unit < (data?.stock || 0) && setUnit(unit + 1);
   };
   const sub_unit = () => {
     unit > 1 && setUnit(unit - 1);
@@ -75,7 +79,7 @@ export default function Modal({
               ❌
             </button>
             <h1 className="font-bold text-[1.2rem] mb-2">
-              Masukkan Data Pelanggan
+              {debt ? "Data Pengembalian" : "Masukkan Data Pelanggan"}
             </h1>
             <div className="flex gap-4">
               <div>
@@ -86,9 +90,9 @@ export default function Modal({
                     if (handleSubmit == undefined) return;
                     if (
                       await ask(
-                        (data.total || 0) - paid < 0
+                        (data?.total || 0) - paid < 0
                           ? `pastikan pelanggan sudah membayar dan diberi kembalian ${currency(
-                              paid - (data.total || 0)
+                              paid - (data?.total || 0)
                             )} ok?`
                           : "pastikan pelanggan sudah membayar ok?",
                         { title: "Persetujuan", type: "info" }
@@ -96,9 +100,11 @@ export default function Modal({
                     ) {
                       await handleSubmit({
                         name: nameForm.current?.value || "",
-                        total: data.total || 0,
+                        total: data?.total || 0,
                         paid:
-                          (data.total || 0) - paid < 0 ? data.total || 0 : paid,
+                          (data?.total || 0) - paid < 0
+                            ? data?.total || 0
+                            : paid,
                         telp: telpForm.current?.value,
                         due: dateForm.current?.value
                           ? Math.floor(
@@ -114,37 +120,6 @@ export default function Modal({
                   }}
                 >
                   <div className="flex">
-                    <label className="w-[100px] mr-4">Nama</label>
-                    <input
-                      id="name"
-                      ref={nameForm}
-                      type={"text"}
-                      required
-                      placeholder="Isi Nama Pelanggan/Perusahaan"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
-                    />
-                  </div>
-                  <div className="flex">
-                    <label className="w-[100px] mr-4">Alamat</label>
-                    <input
-                      id="alamat"
-                      ref={addressFrom}
-                      type={"text"}
-                      placeholder="Tidak harus diisi"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
-                    />
-                  </div>
-                  <div className="flex">
-                    <label className="w-[100px] mr-4">No.Telepon</label>
-                    <input
-                      id="telp"
-                      ref={telpForm}
-                      type={"tel"}
-                      placeholder="Tidak harus diisi"
-                      className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
-                    />
-                  </div>
-                  <div className="flex">
                     <label className="w-[100px] mr-4">Dibayar</label>
                     <input
                       required
@@ -158,28 +133,94 @@ export default function Modal({
                       className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
                     />
                   </div>
-                  <div className="flex">
-                    <label className="w-[100px] mr-4">Tenggak*</label>
-                    <input id="tenggang" type={"date"} ref={dateForm} />
-                    <div className="ml-2">
-                      <p className="text-[0.7rem]">Apabila hutang</p>
-                      <p className="text-[0.7rem]">(Tidak harus diisi)</p>
-                    </div>
-                  </div>
+                  {debt ? (
+                    <>
+                      <div className="flex">
+                        <h1 className="w-[100px] mr-4">Nama</h1>
+                        <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem]">
+                          {debtData?.expand.customer.name}
+                        </p>
+                      </div>
+                      <div className="flex">
+                        <h1 className="w-[100px] mr-4">Tgl.Hutang</h1>
+                        <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem]">
+                          {new Date(debtData?.created || "").toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex">
+                        <h1 className="w-[100px] mr-4">Nota</h1>
+                        <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem]">
+                          In Progress
+                        </p>
+                      </div>
+                      <div className="flex">
+                        <h1 className="w-[100px] mr-4">Jatuh Tempo</h1>
+                        <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem]">
+                          {debtData?.due
+                            ? new Date(debtData.due * 1000).toLocaleDateString()
+                            : "Tidak ada data"}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex">
+                        <label className="w-[100px] mr-4">Nama</label>
+                        <input
+                          id="name"
+                          ref={nameForm}
+                          type={"text"}
+                          required
+                          placeholder="Isi Nama Pelanggan/Perusahaan"
+                          className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
+                        />
+                      </div>
+                      <div className="flex">
+                        <label className="w-[100px] mr-4">Alamat</label>
+                        <input
+                          id="alamat"
+                          ref={addressFrom}
+                          type={"text"}
+                          placeholder="Tidak harus diisi"
+                          className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
+                        />
+                      </div>
+                      <div className="flex">
+                        <label className="w-[100px] mr-4">No.Telepon</label>
+                        <input
+                          id="telp"
+                          ref={telpForm}
+                          type={"tel"}
+                          placeholder="Tidak harus diisi"
+                          className="px-1 placeholder:text-gray-400 placeholder:text-[0.7rem]"
+                        />
+                      </div>
+                      <div className="flex">
+                        <label className="w-[100px] mr-4">Tenggak*</label>
+                        <input id="tenggang" type={"date"} ref={dateForm} />
+                        <div className="ml-2">
+                          <p className="text-[0.7rem]">Apabila hutang</p>
+                          <p className="text-[0.7rem]">(Tidak harus diisi)</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
                   <div className="flex gap-8 justify-center w-full mt-2">
                     <button
                       className="px-2 py-[0.1rem] rounded-full bg-purple-900 hover:bg-purple-600 my-1"
                       type="submit"
                     >
-                      🛒 Beli
+                      {debt ? "💸 Bayar" : "🛒 Beli"}
                     </button>
                   </div>
                 </form>
               </div>
               <div className="gap-2 flex flex-col border-l-2 border-purple-600 pl-2">
-                <h1 className="text-[0.8rem]">Total</h1>
+                <h1 className="text-[0.8rem]">{debt ? "Hutang" : "Total"}</h1>
                 <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
-                  {currency(data.total || 0)}
+                  {debt
+                    ? currency(debtData?.debt || 0)
+                    : currency(data?.total || 0)}
                 </p>
                 <h1 className="text-[0.8rem]">Dibayar</h1>
                 <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
@@ -187,7 +228,9 @@ export default function Modal({
                 </p>
                 <h1 className="text-[0.8rem]">Kurang</h1>
                 <p className="bg-[rgba(30,0,30,1)] w-[200px] text-center">
-                  {change((data.total || 0) - paid)}
+                  {debt
+                    ? change((debtData?.debt || 0) - paid)
+                    : change((data?.total || 0) - paid)}
                 </p>
               </div>
             </div>
@@ -197,7 +240,7 @@ export default function Modal({
             <h1 className="uppercase text-[1.5rem] font-bold">
               {cart ? "Edit Cart" : "Add to Cart"}
             </h1>
-            <p className="p-2 bg-[rgba(30,0,30,1)] rounded-md">{data.name}</p>
+            <p className="p-2 bg-[rgba(30,0,30,1)] rounded-md">{data?.name}</p>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4 justify-center">
                 <span className="bg-[#202] rounded-[30%] p-2 w-[60px] text-center">
@@ -212,7 +255,8 @@ export default function Modal({
                     <button
                       className="ml-8 bg-purple-900"
                       onClick={async () => {
-                        if (handleDelete == undefined) return;
+                        if (handleDelete == undefined || data == undefined)
+                          return;
                         await handleDelete(data, unit);
                         handleClose();
                       }}
@@ -222,11 +266,12 @@ export default function Modal({
                   </div>
                 )}
               </div>
-              <p>Total = {currency(data.price * unit)}</p>
+              <p>Total = {currency(data?.price || 0 * unit)}</p>
             </div>
             <div className="flex gap-12">
               <button
                 onClick={async () => {
+                  if (handleEvent == undefined || data == undefined) return;
                   await handleEvent(data, unit);
                   handleClose();
                 }}

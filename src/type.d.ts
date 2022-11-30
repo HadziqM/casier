@@ -144,3 +144,22 @@ export interface CustomerData{
   due?:number
   adrress?:string
 }
+export interface DebtData{
+    created:string
+    updated:string
+    id:string
+    full:boolean
+    debt?:number
+    due?:number
+    telephone:string
+    total:number
+    product:string[]
+    expand:{
+      customer:{
+        name:string
+        id:string
+        address:string
+        bought:number
+      }
+    }
+}
