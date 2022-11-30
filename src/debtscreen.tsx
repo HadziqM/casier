@@ -7,9 +7,10 @@ import { AnimatePresence } from "framer-motion";
 
 interface Prop {
   debt: Transaction;
+  handlePay: (id: string, paid: number) => Promise<void>;
 }
 
-export default function DebtSc({ debt }: Prop) {
+export default function DebtSc({ debt, handlePay }: Prop) {
   const [modal, setModal] = useState(false);
   const [selected, setSelected] = useState("");
   return (
@@ -42,6 +43,7 @@ export default function DebtSc({ debt }: Prop) {
             debt
             debtData={debt.items?.filter((e) => e.id == selected)[0]}
             handleClose={() => setModal(false)}
+            handlePay={handlePay}
           />
         )}
       </AnimatePresence>

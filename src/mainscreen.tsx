@@ -104,6 +104,17 @@ export default function Main() {
     setDebt(JSON.parse(data_cart.debt) as Transaction);
     setCart(JSON.parse(data_cart.cart) as Cart);
   };
+  const payEvent = async (id: string, paid: number) => {
+    const data_cart = JSON.parse(
+      await invoke("debt_collected", {
+        host: logData.host,
+        port: logData.port,
+        id,
+        paid,
+      })
+    ) as Transaction;
+    setDebt(data_cart);
+  };
   const idkItis = () => {
     const newList = [
       <Overview />,
@@ -116,7 +127,7 @@ export default function Main() {
         handleSubmit={submitEvent}
       />,
       <PrintSc />,
-      <DebtSc debt={debt} />,
+      <DebtSc debt={debt} handlePay={payEvent} />,
     ];
     return newList[newPage];
   };

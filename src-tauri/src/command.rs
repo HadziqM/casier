@@ -55,7 +55,6 @@ struct HistoryCreate {
 struct TransactionCreate {
     customer: String,
     total: i32,
-    paid: i32,
     product: Vec<String>,
     full: bool,
     debt: Option<i32>,
@@ -123,7 +122,7 @@ async fn get_prod_cart_debt(
             .await,
         debt: debt
             .list_all(Some(
-                "filter=(full=false)&sort=-due&expand=customer".to_string(),
+                "filter=(full=false)&sort=due&expand=customer".to_string(),
             ))
             .await,
     };
@@ -141,7 +140,7 @@ async fn get_cart_debt(cart: crud::Collection, debt: crud::Collection) -> String
             .await,
         debt: debt
             .list_all(Some(
-                "filter=(full=false)&sort=-due&expand=customer".to_string(),
+                "filter=(full=false)&sort=due&expand=customer".to_string(),
             ))
             .await,
     };
@@ -243,7 +242,7 @@ pub async fn delete_all(
 }
 #[tauri::command]
 pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
-    println!("{}", rest);
+    // println!("{}", rest);
     let user = crud::Collection {
         host: String::from(&host),
         port,
@@ -309,7 +308,6 @@ pub async fn transaction_all_debt(
     telp: Option<String>,
     due: Option<i32>,
 ) -> String {
-    println!("invoked");
     let customer_struct = crud::Collection {
         host: String::from(&host),
         port,
@@ -391,14 +389,16 @@ pub async fn transaction_all_debt(
     } else {
         customer_data.change_bought(check.items[0].bought + 1);
         let first_item = check.items[0].id.as_ref().unwrap();
-        new_id.push_str(
+        let wth_error: Customer = serde_json::from_str(
             &customer_struct
                 .update(
                     String::from(first_item),
                     serde_json::to_string(&customer_data).unwrap(),
                 )
                 .await,
-        );
+        )
+        .unwrap();
+        new_id.push_str(&wth_error.id.unwrap());
     }
     // //Create Company Data if given on Input
     // if company.is_some() {
@@ -420,7 +420,6 @@ pub async fn transaction_all_debt(
         let transaction_data = TransactionCreate {
             customer: String::from(&new_id),
             total,
-            paid,
             full: false,
             debt: Some(total - paid),
             due,
@@ -434,7 +433,6 @@ pub async fn transaction_all_debt(
         let transaction_data = TransactionCreate {
             customer: String::from(&new_id),
             total,
-            paid,
             full: true,
             debt: None,
             due: None,
@@ -482,7 +480,7 @@ pub async fn debt_collected(host: String, port: i32, id: String, paid: i32) -> S
     }
     transaction_struct
         .list_all(Some(
-            "filter=(full=false)&sort=-due&expand=customer".to_string(),
+            "filter=(full=false)&sort=due&expand=customer".to_string(),
         ))
         .await
 }

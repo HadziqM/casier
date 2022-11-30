@@ -15,6 +15,7 @@ interface Props {
   handleEvent?: (data: ModalData, unit: number) => Promise<void>;
   handleDelete?: (data: ModalData, unit: number) => Promise<void>;
   handleSubmit?: (data: CustomerData) => Promise<void>;
+  handlePay?: (id: string, paid: number) => Promise<void>;
 }
 
 export default function Modal({
@@ -27,6 +28,7 @@ export default function Modal({
   cart,
   buy,
   handleDelete,
+  handlePay,
 }: Props) {
   const dropIn = {
     hiden: { y: "-100vh", opacity: 0 },
@@ -62,6 +64,21 @@ export default function Modal({
       return "PAS";
     } else return "Kelebihan " + currency(num * -1);
   };
+  const warnString = () => {
+    if (debt) {
+      return (debtData?.debt || 0) - paid < 0
+        ? `Pastikan pelanggan sudah membayar dan diberi kembalian ${currency(
+            paid - (debtData?.debt || 0)
+          )} ok?`
+        : "Pastikan pelanggan sudah membayar ok?";
+    } else {
+      return (data?.total || 0) - paid < 0
+        ? `Pastikan pelanggan sudah membayar dan diberi kembalian ${currency(
+            paid - (data?.total || 0)
+          )} ok?`
+        : "Pastikan pelanggan sudah membayar ok?";
+    }
+  };
   return (
     <Backdrop>
       <motion.div
@@ -87,32 +104,39 @@ export default function Modal({
                   className="flex flex-col gap-1"
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    if (handleSubmit == undefined) return;
                     if (
-                      await ask(
-                        (data?.total || 0) - paid < 0
-                          ? `pastikan pelanggan sudah membayar dan diberi kembalian ${currency(
-                              paid - (data?.total || 0)
-                            )} ok?`
-                          : "pastikan pelanggan sudah membayar ok?",
-                        { title: "Persetujuan", type: "info" }
-                      )
+                      await ask(warnString(), {
+                        title: "Persetujuan",
+                        type: "info",
+                      })
                     ) {
-                      await handleSubmit({
-                        name: nameForm.current?.value || "",
-                        total: data?.total || 0,
-                        paid:
-                          (data?.total || 0) - paid < 0
-                            ? data?.total || 0
-                            : paid,
-                        telp: telpForm.current?.value,
-                        due: dateForm.current?.value
-                          ? Math.floor(
-                              new Date(dateForm.current.value).getTime() / 1000
-                            )
-                          : undefined,
-                        adrress: addressFrom.current?.value,
-                      });
+                      if (debt) {
+                        if (handlePay == undefined) return;
+                        await handlePay(
+                          debtData?.id || "",
+                          (debtData?.debt || 0) - paid < 0
+                            ? debtData?.debt || 0
+                            : paid
+                        );
+                      } else {
+                        if (handleSubmit == undefined) return;
+                        await handleSubmit({
+                          name: nameForm.current?.value || "",
+                          total: data?.total || 0,
+                          paid:
+                            (data?.total || 0) - paid < 0
+                              ? data?.total || 0
+                              : paid,
+                          telp: telpForm.current?.value,
+                          due: dateForm.current?.value
+                            ? Math.floor(
+                                new Date(dateForm.current.value).getTime() /
+                                  1000
+                              )
+                            : undefined,
+                          adrress: addressFrom.current?.value,
+                        });
+                      }
                       handleClose();
                     } else {
                       handleClose();
