@@ -91,7 +91,18 @@ export interface Transaction{
         id:string
         address:string
         bought:number
-      }
+      },
+      product:{
+        total:number
+        unit:number
+        id:string
+        expand:{
+          product:{
+            name:string
+            id:string
+          }
+        }
+      }[]
     }
   }[] 
 }

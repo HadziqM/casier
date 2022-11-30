@@ -126,7 +126,7 @@ export default function Main() {
         handleCencel={cencelEvent}
         handleSubmit={submitEvent}
       />,
-      <PrintSc />,
+      <PrintSc debt={debt} />,
       <DebtSc debt={debt} handlePay={payEvent} />,
     ];
     return newList[newPage];

@@ -122,7 +122,7 @@ async fn get_prod_cart_debt(
             .await,
         debt: debt
             .list_all(Some(
-                "filter=(full=false)&sort=due&expand=customer".to_string(),
+                "sort=-created&expand=customer,product.product".to_string(),
             ))
             .await,
     };
@@ -140,7 +140,7 @@ async fn get_cart_debt(cart: crud::Collection, debt: crud::Collection) -> String
             .await,
         debt: debt
             .list_all(Some(
-                "filter=(full=false)&sort=due&expand=customer".to_string(),
+                "sort=-created&expand=customer,product.product".to_string(),
             ))
             .await,
     };
@@ -480,7 +480,7 @@ pub async fn debt_collected(host: String, port: i32, id: String, paid: i32) -> S
     }
     transaction_struct
         .list_all(Some(
-            "filter=(full=false)&sort=due&expand=customer".to_string(),
+            "sort=-created&expand=customer,product.product".to_string(),
         ))
         .await
 }

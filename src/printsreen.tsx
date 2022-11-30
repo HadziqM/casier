@@ -1,7 +1,12 @@
 import { toPng, toJpeg } from "html-to-image";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
+import { Transaction } from "./type";
 
-export default function PrintSc() {
+interface Prop {
+  debt: Transaction;
+}
+
+export default function PrintSc({ debt }: Prop) {
   const ref = useRef<HTMLDivElement | null>(null);
   const downloadPng = useCallback(() => {
     if (ref.current === null) {
@@ -20,14 +25,18 @@ export default function PrintSc() {
       });
   }, [ref]);
   return (
-    <div
-      ref={ref}
-      className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center"
-    >
+    <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
       <button type="button" onClick={downloadPng}>
         Save png
       </button>
-      wth
+      <div ref={ref}>
+        {debt.items ? debt.items[0].expand.customer.name : "hello"}
+        {debt.items
+          ? debt.items[0].expand.product.map((e) => (
+              <p>{e.expand.product.name}</p>
+            ))
+          : "hello"}
+      </div>
     </div>
   );
 }
