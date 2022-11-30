@@ -136,7 +136,6 @@ export default function Main() {
       {login ? (
         <>
           <Menu clicked={(index: number) => setNewPage(index)} />
-          {/* {page} */}
           {idkItis()}
           <div className="flex flex-col items-center absolute bottom-0 right-0">
             <h1>Its main Screen</h1>
