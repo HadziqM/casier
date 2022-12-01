@@ -5,6 +5,8 @@
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem};
 use tauri::{Manager, SystemTrayEvent};
 pub mod command;
+pub mod csv_maker;
+pub mod unique_command;
 fn main() {
     let tray_menu = SystemTrayMenu::new()
         .add_item(CustomMenuItem::new("quit".to_string(), "Quit"))
@@ -26,13 +28,15 @@ fn main() {
             command::update_or_create,
             command::get_all,
             command::delete_all,
-            command::buy_update,
-            command::transaction_all_debt,
-            command::debt_collected,
-            command::get_all_data,
-            command::delete_update,
-            command::change_update,
-            command::cencel_all
+            unique_command::buy_update,
+            unique_command::transaction_all_debt,
+            unique_command::debt_collected,
+            unique_command::get_all_data,
+            unique_command::delete_update,
+            unique_command::change_update,
+            unique_command::cencel_all,
+            csv_maker::csv_transaction_writer,
+            csv_maker::csv_history_writer,
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {

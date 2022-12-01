@@ -117,6 +117,9 @@ export default function Main() {
     ) as Transaction;
     setDebt(data_cart);
   };
+  const dataEvent = async (start: string, stop: string, dir: string) => {
+    await invoke("");
+  };
   const idkItis = () => {
     const newList = [
       <Overview />,
@@ -130,7 +133,7 @@ export default function Main() {
       />,
       <PrintSc debt={debt} />,
       <DebtSc debt={debt} handlePay={payEvent} />,
-      <InspectionSc />,
+      <InspectionSc handleData={dataEvent} />,
     ];
     return newList[newPage];
   };
