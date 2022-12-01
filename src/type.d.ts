@@ -82,14 +82,14 @@ export interface Transaction{
     full:boolean
     debt?:number
     due?:number
-    telephone:string
     total:number
     product:string[]
     expand:{
       customer:{
         name:string
+        phone?:string
         id:string
-        address:string
+        address?:string
         bought:number
       },
       product:{
@@ -99,6 +99,7 @@ export interface Transaction{
         expand:{
           product:{
             name:string
+            price:number
             id:string
           }
         }
@@ -156,21 +157,33 @@ export interface CustomerData{
   adrress?:string
 }
 export interface DebtData{
-    created:string
-    updated:string
-    id:string
-    full:boolean
-    debt?:number
-    due?:number
-    telephone:string
-    total:number
-    product:string[]
-    expand:{
-      customer:{
-        name:string
-        id:string
-        address:string
-        bought:number
+  created:string
+  updated:string
+  id:string
+  full:boolean
+  debt?:number
+  due?:number
+  total:number
+  product:string[]
+  expand:{
+    customer:{
+      name:string
+      phone?:string
+      id:string
+      address?:string
+      bought:number
+    },
+    product:{
+      total:number
+      unit:number
+      id:string
+      expand:{
+        product:{
+          name:string
+          price:number
+          id:string
+        }
       }
-    }
+    }[]
+  }
 }

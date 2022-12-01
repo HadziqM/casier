@@ -1,5 +1,6 @@
 import { toPng, toJpeg } from "html-to-image";
 import { useCallback, useRef, useState } from "react";
+import { currency } from "./lib/math";
 import { Transaction } from "./type";
 
 interface Prop {
@@ -30,12 +31,43 @@ export default function PrintSc({ debt }: Prop) {
         Save png
       </button>
       <div ref={ref}>
+        <div>
+          <div className="flex">
+            <h2>Name:</h2>
+            <p>{debt.items ? debt.items[0].expand.customer.name : ""}</p>
+          </div>
+          <div className="flex">
+            <h2>Address:</h2>
+            <p>{debt.items ? debt.items[0].expand.customer.address : ""}</p>
+          </div>
+          <div className="flex">
+            <h2>Phone:</h2>
+            <p>{debt.items ? debt.items[0].expand.customer.phone : ""}</p>
+          </div>
+          <div className="flex">
+            <h2>Date:</h2>
+            <p>
+              {debt.items
+                ? new Date(debt.items[0].created).toLocaleString()
+                : ""}
+            </p>
+          </div>
+        </div>
         {debt.items ? debt.items[0].expand.customer.name : "hello"}
         {debt.items
           ? debt.items[0].expand.product.map((e) => (
-              <p>{e.expand.product.name}</p>
+              <div className="flex">
+                <p>{e.expand.product.name}</p>
+                <p>{e.expand.product.price}</p>
+                <p>{e.unit}</p>
+                <p>{currency(e.total)}</p>
+              </div>
             ))
           : "hello"}
+        <div className="flex">
+          <h2>Total:</h2>
+          <p>{debt.items ? debt.items[0].total : ""}</p>
+        </div>
       </div>
     </div>
   );

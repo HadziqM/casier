@@ -11,6 +11,7 @@ struct Customer {
     id: Option<String>,
     name: String,
     address: Option<String>,
+    telephone: Option<String>,
     bought: i32,
 }
 impl Customer {
@@ -59,7 +60,6 @@ struct TransactionCreate {
     full: bool,
     debt: Option<i32>,
     due: Option<i32>,
-    telephone: Option<String>,
 }
 #[derive(Serialize, Deserialize)]
 struct TransactionList {
@@ -370,6 +370,7 @@ pub async fn transaction_all_debt(
         name: String::from(&name),
         address,
         bought: 1,
+        telephone: telp.to_owned(),
     };
     let mut new_id = String::new();
     let check: CustomerData = serde_json::from_str(
@@ -424,7 +425,6 @@ pub async fn transaction_all_debt(
             debt: Some(total - paid),
             due,
             product: history_id,
-            telephone: telp.to_owned(),
         };
         transaction_struct
             .create(serde_json::to_string(&transaction_data).unwrap())
@@ -437,7 +437,6 @@ pub async fn transaction_all_debt(
             debt: None,
             due: None,
             product: history_id,
-            telephone: telp.to_owned(),
         };
         transaction_struct
             .create(serde_json::to_string(&transaction_data).unwrap())

@@ -29,10 +29,8 @@ export default function Search({ get_list }: Prop) {
         <input
           onChange={(e) => get_list(e.currentTarget.value)}
           type="search"
-          id="default-search"
           className="block w-full p-2 pl-10 text-sm text-gray-200 border border-purple-700 rounded-lg bg-[rgba(30,0,30,0.5)] focus:ring-blue-500 focus:border-blue-500"
           placeholder="Search..."
-          required
         />
       </div>
     </form>

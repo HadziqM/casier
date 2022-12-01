@@ -22,7 +22,7 @@ export default function DebtSc({ debt, handlePay }: Prop) {
             .map((e) => (
               <Card
                 name={e.expand.customer.name}
-                telp={e.telephone}
+                telp={e.expand.customer.phone}
                 stock={e.due ? e.due : 0}
                 useCase="debt"
                 price={e.debt || 0}
