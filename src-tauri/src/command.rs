@@ -11,7 +11,7 @@ struct Customer {
     id: Option<String>,
     name: String,
     address: Option<String>,
-    telephone: Option<String>,
+    phone: Option<String>,
     bought: i32,
 }
 impl Customer {
@@ -370,7 +370,7 @@ pub async fn transaction_all_debt(
         name: String::from(&name),
         address,
         bought: 1,
-        telephone: telp.to_owned(),
+        phone: telp.to_owned(),
     };
     let mut new_id = String::new();
     let check: CustomerData = serde_json::from_str(
