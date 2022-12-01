@@ -118,7 +118,14 @@ export default function Main() {
     setDebt(data_cart);
   };
   const dataEvent = async (start: string, stop: string, dir: string) => {
-    await invoke("");
+    const res = await invoke("csv_history_writer", {
+      host: logData.host,
+      port: logData.port,
+      start,
+      stop,
+      dir,
+    });
+    alert(res);
   };
   const idkItis = () => {
     const newList = [

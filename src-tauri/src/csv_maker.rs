@@ -2,7 +2,7 @@ use crate::command::crud;
 use csv;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct TransactionItems {
     id: String,
     name: String,
@@ -16,33 +16,33 @@ struct TransactionItems {
     due: Option<i32>,
     created: String,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct ProductExtend {
     name: String,
     price: i64,
     stock: i64,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct Extend {
     product: ProductExtend,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct HistoryItems {
     created: String,
     total: i64,
     unit: i32,
     id: String,
-    extend: Extend,
+    expand: Extend,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct HistoryList {
-    items: Option<HistoryItems>,
+    items: Option<Vec<HistoryItems>>,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct TransactionList {
-    items: Option<TransactionItems>,
+    items: Option<Vec<TransactionItems>>,
 }
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct Analytic {
     money: i64,
     debt: i64,
@@ -63,9 +63,17 @@ pub async fn csv_history_writer(
     let history_data: HistoryList = serde_json::from_str(
         &history
             .list_all(Some(format!(
-                "extend=product&filter=(created<'{}'&&created>'{}')",
-                start.to_owned(),
+                "expand=product&filter=(created<'{}')",
                 stop.to_owned()
+            )))
+            .await,
+    )
+    .unwrap();
+    let history_check: HistoryList = serde_json::from_str(
+        &history
+            .list_all(Some(format!(
+                "expand=product&filter=(created>'{}')",
+                start.to_owned()
             )))
             .await,
     )
@@ -75,21 +83,27 @@ pub async fn csv_history_writer(
         .write_record(&["id", "name", "bought", "total", "date"])
         .expect("idk");
     match history_data.items {
-        Some(_) => {
-            for data in &history_data.items {
-                writer
-                    .write_record(&[
-                        data.id.to_owned(),
-                        data.extend.product.name.to_owned(),
-                        data.unit.to_string(),
-                        data.total.to_string(),
-                        data.created.to_owned(),
-                    ])
-                    .expect("idk");
+        Some(_) => match history_check.items {
+            Some(_) => {
+                let idk_why = &history_check.items.unwrap();
+                for data in &history_data.items.unwrap() {
+                    if idk_why.contains(data) {
+                        writer
+                            .write_record(&[
+                                data.id.to_owned(),
+                                data.expand.product.name.to_owned(),
+                                data.unit.to_string(),
+                                data.total.to_string(),
+                                data.created.to_owned(),
+                            ])
+                            .expect("idk");
+                    }
+                }
+                writer.flush().expect("idk");
+                "success".to_string()
             }
-            writer.flush().expect("idk");
-            "success".to_string()
-        }
+            None => "failed".to_string(),
+        },
         None => "failed".to_string(),
     }
 }
@@ -108,11 +122,13 @@ pub async fn csv_transaction_writer(
     };
     let transaction_data: TransactionList = serde_json::from_str(
         &transaction
-            .list_all(Some(format!(
-                "filter=(created<'{}'&&created>'{}')",
-                start.to_owned(),
-                stop.to_owned()
-            )))
+            .list_all(Some(format!("filter=(created<'{}')", stop.to_owned())))
+            .await,
+    )
+    .unwrap();
+    let transaction_check: TransactionList = serde_json::from_str(
+        &transaction
+            .list_all(Some(format!("filter=(created>'{}')", start.to_owned())))
             .await,
     )
     .unwrap();
@@ -126,7 +142,7 @@ pub async fn csv_transaction_writer(
     let mut debt: i64 = 0;
     match transaction_data.items {
         Some(_) => {
-            for data in &transaction_data.items {
+            for data in &transaction_data.items.unwrap() {
                 money += data.total as i64;
                 debt += data.debt.unwrap_or(0) as i64;
                 let full_data = match data.full {

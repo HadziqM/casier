@@ -20,6 +20,7 @@ export default function InspectionSc({ handleData }: Prop) {
             className="flex flex-col gap-4 h-full justify-center items-center pt-[60px]"
             onSubmit={async (e) => {
               e.preventDefault();
+              //   alert(new Date(dayDate.current?.value + "T00:00").toISOString());
               const direction = await save({
                 filters: [
                   {
