@@ -5,6 +5,10 @@ import {
   FaMoneyBill,
   FaPrint,
   FaList,
+  FaBackspace,
+  FaGlasses,
+  FaBackward,
+  FaArrowCircleLeft,
 } from "react-icons/fa";
 
 interface Iprop {
@@ -25,13 +29,17 @@ function Icons({ children, click, act }: Iprop) {
   );
 }
 
-export default function Menu(prop: { clicked: (index: number) => void }) {
+export default function Menu(prop: {
+  clicked: (index: number) => void;
+  backClick: () => void;
+}) {
   const init = [
     <FaHome className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
     <FaList className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
     <FaShoppingCart className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
     <FaPrint className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
     <FaMoneyBill className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
+    <FaGlasses className="w-8 h-8 my-4 text-purple-700 cursor-pointer" />,
   ];
   const init2 = [false, false, false, false, false];
   const initCopy = [true, false, false, false, false];
@@ -51,6 +59,12 @@ export default function Menu(prop: { clicked: (index: number) => void }) {
           {e}
         </Icons>
       ))}
+      <div className="absolute bottom-0 left-0 w-[100px] flex justify-center items-center">
+        <FaArrowCircleLeft
+          onClick={() => prop.backClick()}
+          className="w-8 h-8 my-4 text-purple-700 cursor-pointer"
+        />
+      </div>
     </div>
   );
 }

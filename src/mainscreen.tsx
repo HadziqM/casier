@@ -15,6 +15,7 @@ import Overview from "./overviewscreen";
 import CartSc from "./cartscreen";
 import PrintSc from "./printsreen";
 import DebtSc from "./debtscreen";
+import InspectionSc from "./inspectionscreen";
 import ProductSc from "./productscreen";
 
 interface LoginP {
@@ -128,6 +129,7 @@ export default function Main() {
       />,
       <PrintSc debt={debt} />,
       <DebtSc debt={debt} handlePay={payEvent} />,
+      <InspectionSc />,
     ];
     return newList[newPage];
   };
@@ -135,12 +137,11 @@ export default function Main() {
     <>
       {login ? (
         <>
-          <Menu clicked={(index: number) => setNewPage(index)} />
+          <Menu
+            clicked={(index: number) => setNewPage(index)}
+            backClick={() => setLogin(false)}
+          />
           {idkItis()}
-          <div className="flex flex-col items-center absolute bottom-0 right-0">
-            <h1>Its main Screen</h1>
-            <button onClick={() => setLogin(false)}>Back</button>
-          </div>
         </>
       ) : (
         <Login

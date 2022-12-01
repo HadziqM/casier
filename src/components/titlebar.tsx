@@ -4,7 +4,6 @@ import {
   FaWindowMinimize,
   FaWindowClose,
 } from "react-icons/fa";
-import { GrClose } from "react-icons/gr";
 import { appWindow } from "@tauri-apps/api/window";
 
 interface TitleProps {}

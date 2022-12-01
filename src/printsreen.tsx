@@ -1,4 +1,4 @@
-import { toPng, toJpeg } from "html-to-image";
+import { toJpeg } from "html-to-image";
 import { useCallback, useRef, useState } from "react";
 import { currency } from "./lib/math";
 import { Transaction } from "./type";
@@ -13,10 +13,10 @@ export default function PrintSc({ debt }: Prop) {
     if (ref.current === null) {
       return;
     }
-    toPng(ref.current, { cacheBust: true })
+    toJpeg(ref.current, { cacheBust: true })
       .then((dataUrl) => {
         const link = document.createElement("a");
-        link.download = "wtf.png";
+        link.download = `${debt.items ? debt.items[0].id : ""}.png`;
         link.href = dataUrl;
         link.target = "_blank";
         link.click();
@@ -30,43 +30,77 @@ export default function PrintSc({ debt }: Prop) {
       <button type="button" onClick={downloadPng}>
         Save png
       </button>
-      <div ref={ref}>
-        <div>
-          <div className="flex">
-            <h2>Name:</h2>
-            <p>{debt.items ? debt.items[0].expand.customer.name : ""}</p>
-          </div>
-          <div className="flex">
-            <h2>Address:</h2>
-            <p>{debt.items ? debt.items[0].expand.customer.address : ""}</p>
-          </div>
-          <div className="flex">
-            <h2>Phone:</h2>
-            <p>{debt.items ? debt.items[0].expand.customer.phone : ""}</p>
-          </div>
-          <div className="flex">
-            <h2>Date:</h2>
-            <p>
-              {debt.items
-                ? new Date(debt.items[0].created).toLocaleString()
-                : ""}
-            </p>
-          </div>
-        </div>
-        {debt.items ? debt.items[0].expand.customer.name : "hello"}
-        {debt.items
-          ? debt.items[0].expand.product.map((e) => (
+      <div className="p-[10px] border-[3px] border-purple-600 rounded-2xl bg-[rgba(30,0,30,0.8)]">
+        <div className="relative flex-flex-col w-[400px] h-[260px] overflow-auto">
+          <div
+            className="bg-white flex flex-col w-[380px] py-4 justify-center items-center text-black"
+            ref={ref}
+          >
+            <div>
               <div className="flex">
-                <p>{e.expand.product.name}</p>
-                <p>{e.expand.product.price}</p>
-                <p>{e.unit}</p>
-                <p>{currency(e.total)}</p>
+                <h2 className="w-[80px]">Name:</h2>
+                <p className="w-[270px]">
+                  {debt.items ? debt.items[0].expand.customer.name : ""}
+                </p>
               </div>
-            ))
-          : "hello"}
-        <div className="flex">
-          <h2>Total:</h2>
-          <p>{debt.items ? debt.items[0].total : ""}</p>
+              <div className="flex">
+                <h2 className="w-[80px]">Address:</h2>
+                <p className="w-[270px]">
+                  {debt.items ? debt.items[0].expand.customer.address : ""}
+                </p>
+              </div>
+              <div className="flex">
+                <h2 className="w-[80px]">Phone:</h2>
+                <p className="w-[270px]">
+                  {debt.items ? debt.items[0].expand.customer.phone : ""}
+                </p>
+              </div>
+              <div className="flex">
+                <h2 className="w-[80px]">Date:</h2>
+                <p className="w-[270px]">
+                  {debt.items
+                    ? new Date(debt.items[0].created).toLocaleString()
+                    : ""}
+                </p>
+              </div>
+            </div>
+            <div className="flex">
+              <p className="w-[150px] border border-black text-center">Name</p>
+              <p className="w-[50px] border border-black text-center">Qty</p>
+              <p className="w-[150px] border border-black text-center">Price</p>
+            </div>
+            {debt.items
+              ? debt.items[0].expand.product.map((e) => (
+                  <div className="flex">
+                    <p className=" text-[0.7rem] w-[150px] border border-black text-center">
+                      {e.expand.product.name}
+                    </p>
+                    <p className=" text-[0.7rem] w-[50px] border border-black text-center">
+                      {e.unit}
+                    </p>
+                    <p className=" text-[0.7rem] w-[150px] border border-black text-center">
+                      {currency(e.total)}
+                    </p>
+                  </div>
+                ))
+              : "hello"}
+            <div className="flex w-full px-4 mt-4">
+              <h2 className="ml-auto ">Total: </h2>
+              <p className="w-[200px] text-right">
+                {debt.items ? currency(debt.items[0].total) : ""}
+              </p>
+            </div>
+            <div className="flex w-full px-4 mt-2">
+              <h2 className="ml-auto ">Paid: </h2>
+              <p className="w-[200px] text-right">
+                {debt.items
+                  ? debt.items[0].full
+                    ? currency(debt.items[0].total)
+                    : currency(debt.items[0].debt || 0 - debt.items[0].total)
+                  : ""}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
