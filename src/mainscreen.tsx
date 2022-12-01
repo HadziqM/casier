@@ -104,6 +104,7 @@ export default function Main() {
     ) as TransactionOut;
     setDebt(JSON.parse(data_cart.debt) as Transaction);
     setCart(JSON.parse(data_cart.cart) as Cart);
+    setNewPage(3);
   };
   const payEvent = async (id: string, paid: number) => {
     const data_cart = JSON.parse(

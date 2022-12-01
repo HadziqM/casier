@@ -49,6 +49,7 @@ export default function Modal({
   const addressFrom = useRef<HTMLInputElement | null>(null);
   const dateForm = useRef<HTMLInputElement | null>(null);
   const telpForm = useRef<HTMLInputElement | null>(null);
+  const [copy, setCopy] = useState(false);
   const [paid, setPaid] = useState(0);
   const [unit, setUnit] = useState(cart ? Number(data?.unit) : 1);
   const add_unit = () => {
@@ -173,8 +174,26 @@ export default function Modal({
                       </div>
                       <div className="flex">
                         <h1 className="w-[100px] mr-4">Nota</h1>
-                        <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem]">
-                          In Progress
+                        <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem] relative">
+                          {debtData?.id}{" "}
+                          <span
+                            className="cursor-pointer hover:border hover:border-white"
+                            onClick={() => {
+                              navigator.clipboard.writeText(debtData?.id || "");
+                              setCopy(true);
+                              setTimeout(() => setCopy(false), 1000);
+                            }}
+                          >
+                            🔗
+                          </span>
+                          <span
+                            style={
+                              copy ? { display: "flex" } : { display: "none" }
+                            }
+                            className="absolute bg-[rgba(200,0,200,0.3)] p-1 rounded-lg right-4 top-8"
+                          >
+                            Copied
+                          </span>
                         </p>
                       </div>
                       <div className="flex">
@@ -277,7 +296,7 @@ export default function Modal({
                 {cart && (
                   <div>
                     <button
-                      className="ml-8 bg-purple-900"
+                      className="ml-8 bg-purple-900 px-1"
                       onClick={async () => {
                         if (handleDelete == undefined || data == undefined)
                           return;
@@ -285,7 +304,7 @@ export default function Modal({
                         handleClose();
                       }}
                     >
-                      🔥 Delete
+                      🔥 Return
                     </button>
                   </div>
                 )}
