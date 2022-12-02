@@ -7,9 +7,9 @@ struct Items {
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Length {
-    total_items: Option<i32>,
-    code: Option<i32>,
-    error: Option<i32>,
+    total_items: Option<u32>,
+    code: Option<u8>,
+    error: Option<u8>,
     items: Option<Vec<Items>>,
 }
 fn construct_headers() -> reqwest::header::HeaderMap {
@@ -22,7 +22,7 @@ fn construct_headers() -> reqwest::header::HeaderMap {
 }
 pub struct Collection {
     pub(crate) host: String,
-    pub(crate) port: i32,
+    pub(crate) port: u16,
 }
 pub enum Table {
     Transaction,

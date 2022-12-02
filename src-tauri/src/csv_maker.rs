@@ -50,7 +50,7 @@ struct Analytic {
 #[tauri::command]
 pub async fn csv_history_writer(
     host: String,
-    port: i32,
+    port: u16,
     start: String,
     stop: String,
     dir: String,
@@ -104,7 +104,7 @@ pub async fn csv_history_writer(
     }
 }
 #[tauri::command]
-pub async fn analyze(host: String, port: i32, start: String, stop: String) -> String {
+pub async fn analyze(host: String, port: u16, start: String, stop: String) -> String {
     let con = crud::Collection { port, host };
     let transaction_data: TransactionList = serde_json::from_str(
         &crud::Table::Transaction
@@ -141,7 +141,7 @@ pub async fn analyze(host: String, port: i32, start: String, stop: String) -> St
 #[tauri::command]
 pub async fn csv_transaction_writer(
     host: String,
-    port: i32,
+    port: u16,
     start: String,
     stop: String,
     dir: String,

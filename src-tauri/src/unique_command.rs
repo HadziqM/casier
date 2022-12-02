@@ -96,7 +96,7 @@ async fn get_cart_debt(con: &crud::Collection) -> String {
     serde_json::to_string(&full_data).unwrap()
 }
 #[tauri::command]
-pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
+pub async fn buy_update(host: String, port: u16, rest: i32, unit: i32, id: String) -> String {
     let con = crud::Collection { host, port };
     crud::Table::Product
         .update(
@@ -149,7 +149,7 @@ pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: Strin
 #[tauri::command]
 pub async fn transaction_all_debt(
     host: String,
-    port: i32,
+    port: u16,
     name: String,
     paid: i32,
     total: i32,
@@ -227,7 +227,7 @@ pub async fn transaction_all_debt(
     get_cart_debt(&con).await
 }
 #[tauri::command]
-pub async fn debt_collected(host: String, port: i32, id: String, paid: i32) -> String {
+pub async fn debt_collected(host: String, port: u16, id: String, paid: i32) -> String {
     let con = crud::Collection { host, port };
     let transactin_data: TransactionList = serde_json::from_str(
         &crud::Table::Transaction
@@ -262,7 +262,7 @@ pub async fn debt_collected(host: String, port: i32, id: String, paid: i32) -> S
         .await
 }
 #[tauri::command]
-pub async fn get_all_data(host: String, port: i32) -> String {
+pub async fn get_all_data(host: String, port: u16) -> String {
     let connection = crud::Collection { port, host };
     let full_data = InitialDataInput {
         product: crud::Table::Product
@@ -281,7 +281,7 @@ pub async fn get_all_data(host: String, port: i32) -> String {
     serde_json::to_string(&full_data).unwrap()
 }
 #[tauri::command]
-pub async fn delete_update(host: String, port: i32, id: String, unit: i32, pid: String) -> String {
+pub async fn delete_update(host: String, port: u16, id: String, unit: i32, pid: String) -> String {
     let con = crud::Collection { host, port };
     crud::Table::Cart.delete(&con, &id).await;
     crud::Table::Product
@@ -296,7 +296,7 @@ pub async fn delete_update(host: String, port: i32, id: String, unit: i32, pid: 
     get_prod_cart(&con).await
 }
 #[tauri::command]
-pub async fn cencel_all(host: String, port: i32) -> String {
+pub async fn cencel_all(host: String, port: u16) -> String {
     let con = crud::Collection {
         host: String::from(&host),
         port,
@@ -330,7 +330,7 @@ pub async fn cencel_all(host: String, port: i32) -> String {
 #[tauri::command]
 pub async fn change_update(
     host: String,
-    port: i32,
+    port: u16,
     rest: i32,
     unit: i32,
     id: String,
