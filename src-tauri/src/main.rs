@@ -4,7 +4,7 @@
 )]
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayMenuItem};
 use tauri::{Manager, SystemTrayEvent};
-pub mod command;
+pub mod crud;
 pub mod csv_maker;
 pub mod unique_command;
 fn main() {
@@ -20,14 +20,6 @@ fn main() {
     tauri::Builder::default()
         .system_tray(system_tray)
         .invoke_handler(tauri::generate_handler![
-            command::create_data,
-            command::list_data,
-            command::select_data,
-            command::delete_data,
-            command::update_data,
-            command::update_or_create,
-            command::get_all,
-            command::delete_all,
             unique_command::buy_update,
             unique_command::transaction_all_debt,
             unique_command::debt_collected,

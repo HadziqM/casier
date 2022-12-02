@@ -1,4 +1,4 @@
-use crate::command::crud;
+use crate::crud;
 use csv;
 use serde::{Deserialize, Serialize};
 
@@ -55,26 +55,22 @@ pub async fn csv_history_writer(
     stop: String,
     dir: String,
 ) -> String {
-    let history = crud::Collection {
-        port,
-        host: host.to_owned(),
-        collection: "history".to_string(),
-    };
+    let con = crud::Collection { port, host };
     let history_data: HistoryList = serde_json::from_str(
-        &history
-            .list_all(Some(format!(
-                "expand=product&filter=(created<'{}')",
-                stop.to_owned()
-            )))
+        &crud::Table::History
+            .list_all(
+                &con,
+                Some(&format!("expand=product&filter=(created<'{}')", &stop)),
+            )
             .await,
     )
     .unwrap();
     let history_check: HistoryList = serde_json::from_str(
-        &history
-            .list_all(Some(format!(
-                "expand=product&filter=(created>'{}')",
-                start.to_owned()
-            )))
+        &crud::Table::History
+            .list_all(
+                &con,
+                Some(&format!("expand=product&filter=(created>'{}')", &start)),
+            )
             .await,
     )
     .unwrap();
@@ -115,20 +111,16 @@ pub async fn csv_transaction_writer(
     stop: String,
     dir: String,
 ) -> String {
-    let transaction = crud::Collection {
-        port,
-        host: host.to_owned(),
-        collection: "transaction".to_string(),
-    };
+    let con = crud::Collection { port, host };
     let transaction_data: TransactionList = serde_json::from_str(
-        &transaction
-            .list_all(Some(format!("filter=(created<'{}')", stop.to_owned())))
+        &crud::Table::Transaction
+            .list_all(&con, Some(&format!("filter=(created<'{}')", &stop)))
             .await,
     )
     .unwrap();
     let transaction_check: TransactionList = serde_json::from_str(
-        &transaction
-            .list_all(Some(format!("filter=(created>'{}')", start.to_owned())))
+        &crud::Table::Transaction
+            .list_all(&con, Some(&format!("filter=(created>'{}')", &start)))
             .await,
     )
     .unwrap();
