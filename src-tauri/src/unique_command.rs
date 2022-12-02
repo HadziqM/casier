@@ -79,24 +79,6 @@ async fn get_prod_cart(product: crud::Collection, cart: crud::Collection) -> Str
     };
     serde_json::to_string(&output).unwrap()
 }
-async fn get_prod_cart_debt(
-    product: crud::Collection,
-    cart: crud::Collection,
-    debt: crud::Collection,
-) -> String {
-    let full_data = InitialDataInput {
-        product: product.list_all(Some("sort=name".to_string())).await,
-        cart: cart
-            .list(Some("sort=-created&expand=product".to_string()))
-            .await,
-        debt: debt
-            .list_all(Some(
-                "sort=-created&expand=customer,product.product".to_string(),
-            ))
-            .await,
-    };
-    serde_json::to_string(&full_data).unwrap()
-}
 async fn get_cart_debt(cart: crud::Collection, debt: crud::Collection) -> String {
     #[derive(Serialize, Deserialize)]
     struct CartDebt {
@@ -306,22 +288,42 @@ pub async fn debt_collected(host: String, port: i32, id: String, paid: i32) -> S
 }
 #[tauri::command]
 pub async fn get_all_data(host: String, port: i32) -> String {
-    let product = crud::Collection {
-        host: String::from(&host),
+    let connection = crud::Collection {
         port,
-        collection: "product".to_string(),
+        host,
+        collection: "idk".to_string(),
     };
-    let cart = crud::Collection {
-        host: String::from(&host),
-        port,
-        collection: "cart".to_string(),
+    let full_data = InitialDataInput {
+        product: crud::Table::Product
+            .list_all(&connection, Some("sort=name"))
+            .await,
+        cart: crud::Table::Cart
+            .list_all(&connection, Some("sort=-created&expand=product"))
+            .await,
+        debt: crud::Table::Transaction
+            .list_all(
+                &connection,
+                Some("sort=-created&expand=customer,product.product"),
+            )
+            .await,
     };
-    let debt = crud::Collection {
-        host: String::from(&host),
-        port,
-        collection: "transaction".to_string(),
-    };
-    get_prod_cart_debt(product, cart, debt).await
+    serde_json::to_string(&full_data).unwrap()
+    // let product = crud::Collection {
+    //     host: String::from(&host),
+    //     port,
+    //     collection: "product".to_string(),
+    // };
+    // let cart = crud::Collection {
+    //     host: String::from(&host),
+    //     port,
+    //     collection: "cart".to_string(),
+    // };
+    // let debt = crud::Collection {
+    //     host: String::from(&host),
+    //     port,
+    //     collection: "transaction".to_string(),
+    // };
+    // get_prod_cart_debt(product, cart, debt).await
 }
 #[tauri::command]
 pub async fn delete_update(host: String, port: i32, id: String, unit: i32, pid: String) -> String {
