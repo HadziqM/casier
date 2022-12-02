@@ -141,31 +141,37 @@ pub async fn csv_transaction_writer(
     let mut money: i64 = 0;
     let mut debt: i64 = 0;
     match transaction_data.items {
-        Some(_) => {
-            for data in &transaction_data.items.unwrap() {
-                money += data.total as i64;
-                debt += data.debt.unwrap_or(0) as i64;
-                let full_data = match data.full {
-                    true => "yes".to_string(),
-                    false => "no".to_string(),
-                };
-                writer
-                    .write_record(&[
-                        data.id.to_owned(),
-                        data.name.to_owned(),
-                        full_data,
-                        data.total.to_string(),
-                        data.debt.unwrap_or(0).to_string(),
-                        data.created.to_owned(),
-                        data.phone.to_owned().unwrap_or("no phone".to_string()),
-                        data.address.to_owned().unwrap_or("no address".to_string()),
-                    ])
-                    .expect("idk");
+        Some(_) => match transaction_check.items {
+            Some(_) => {
+                let checker = &transaction_check.items.unwrap();
+                for data in &transaction_data.items.unwrap() {
+                    if checker.contains(data) {
+                        money += data.total as i64;
+                        debt += data.debt.unwrap_or(0) as i64;
+                        let full_data = match data.full {
+                            true => "yes".to_string(),
+                            false => "no".to_string(),
+                        };
+                        writer
+                            .write_record(&[
+                                data.id.to_owned(),
+                                data.name.to_owned(),
+                                full_data,
+                                data.total.to_string(),
+                                data.debt.unwrap_or(0).to_string(),
+                                data.created.to_owned(),
+                                data.phone.to_owned().unwrap_or("no phone".to_string()),
+                                data.address.to_owned().unwrap_or("no address".to_string()),
+                            ])
+                            .expect("idk");
+                    }
+                }
+                writer.flush().expect("idk");
+                let out_data = Analytic { debt, money };
+                serde_json::to_string(&out_data).unwrap()
             }
-            writer.flush().expect("idk");
-            let out_data = Analytic { debt, money };
-            serde_json::to_string(&out_data).unwrap()
-        }
+            None => "failed".to_string(),
+        },
         None => "failed".to_string(),
     }
 }

@@ -12,19 +12,6 @@ export interface Product{
     stock:number
   }[]
 }
-export interface Search{
-  totalItems:number
-  items:{
-    id:string
-    name:string
-    expand:{
-      product:{
-        name:string
-        id:string
-      }
-    }
-  }[]
-}
 export interface Cart{
   error?:number
   code?:number
@@ -41,71 +28,6 @@ export interface Cart{
       }
     }
   }[]
-}
-export interface Customer{
-  error?:number
-  code?:number
-  totalItems?:number
-  items?:{
-    updated:string
-    id:string
-    name:string
-    address:string
-    bought:number
-  }[]
-}
-export interface Company{
-  error?:number
-  code?:number
-  totalItems?:number
-  items?:{
-    id:string
-    name:string
-    expand:{
-      customer:{
-        id:string
-        name:string
-        bought:number
-        adress:string
-      }
-    }
-  }[]
-}
-export interface Transaction{
-  error?:number
-  code?:number
-  totalItems?:number
-  items?:{
-    created:string
-    updated:string
-    id:string
-    full:boolean
-    debt?:number
-    due?:number
-    total:number
-    product:string[]
-    expand:{
-      customer:{
-        name:string
-        phone?:string
-        id:string
-        address?:string
-        bought:number
-      },
-      product:{
-        total:number
-        unit:number
-        id:string
-        expand:{
-          product:{
-            name:string
-            price:number
-            id:string
-          }
-        }
-      }[]
-    }
-  }[] 
 }
 export interface Hystory{
   error?:number
@@ -163,16 +85,12 @@ export interface DebtData{
   full:boolean
   debt?:number
   due?:number
+  phone?:string
+  address?:string
+  customer:string
   total:number
   product:string[]
   expand:{
-    customer:{
-      name:string
-      phone?:string
-      id:string
-      address?:string
-      bought:number
-    },
     product:{
       total:number
       unit:number
@@ -186,4 +104,10 @@ export interface DebtData{
       }
     }[]
   }
+}
+export interface Transaction{
+  error?:number
+  code?:number
+  totalItems?:number
+  items?:DebtData[]
 }

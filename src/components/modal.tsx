@@ -163,7 +163,7 @@ export default function Modal({
                       <div className="flex">
                         <h1 className="w-[100px] mr-4">Nama</h1>
                         <p className="w-[200px] bg-[rgba(50,0,50,1)] text-center text-[0.8rem]">
-                          {debtData?.expand.customer.name}
+                          {debtData?.customer}
                         </p>
                       </div>
                       <div className="flex">

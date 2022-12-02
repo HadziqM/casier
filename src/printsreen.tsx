@@ -26,7 +26,9 @@ export default function PrintSc({ debt }: Prop) {
     toJpeg(ref.current, { cacheBust: true })
       .then((dataUrl) => {
         const link = document.createElement("a");
-        link.download = `${debtData ? debtData.id : ""}.Jpeg`;
+        link.download = `${debtData ? debtData.customer : ""}-${
+          debtData ? debtData.id : ""
+        }.Jpeg`;
         link.href = dataUrl;
         link.target = "_blank";
         link.click();
@@ -86,21 +88,15 @@ export default function PrintSc({ debt }: Prop) {
             <div>
               <div className="flex">
                 <h2 className="w-[80px]">Name:</h2>
-                <p className="w-[270px]">
-                  {debtData ? debtData.expand.customer.name : ""}
-                </p>
+                <p className="w-[270px]">{debtData ? debtData.customer : ""}</p>
               </div>
               <div className="flex">
                 <h2 className="w-[80px]">Address:</h2>
-                <p className="w-[270px]">
-                  {debtData ? debtData.expand.customer.address : ""}
-                </p>
+                <p className="w-[270px]">{debtData ? debtData.address : ""}</p>
               </div>
               <div className="flex">
                 <h2 className="w-[80px]">Phone:</h2>
-                <p className="w-[270px]">
-                  {debtData ? debtData.expand.customer.phone : ""}
-                </p>
+                <p className="w-[270px]">{debtData ? debtData.phone : ""}</p>
               </div>
               <div className="flex">
                 <h2 className="w-[80px]">Date:</h2>
