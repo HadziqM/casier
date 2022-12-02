@@ -104,6 +104,41 @@ pub async fn csv_history_writer(
     }
 }
 #[tauri::command]
+pub async fn analyze(host: String, port: i32, start: String, stop: String) -> String {
+    let con = crud::Collection { port, host };
+    let transaction_data: TransactionList = serde_json::from_str(
+        &crud::Table::Transaction
+            .list_all(&con, Some(&format!("filter=(created<'{}')", &stop)))
+            .await,
+    )
+    .unwrap();
+    let transaction_check: TransactionList = serde_json::from_str(
+        &crud::Table::Transaction
+            .list_all(&con, Some(&format!("filter=(created>'{}')", &start)))
+            .await,
+    )
+    .unwrap();
+    let mut money: i64 = 0;
+    let mut debt: i64 = 0;
+    match transaction_data.items {
+        Some(_) => match transaction_check.items {
+            Some(_) => {
+                let checker = &transaction_check.items.unwrap();
+                for data in &transaction_data.items.unwrap() {
+                    if checker.contains(data) {
+                        money += data.total as i64;
+                        debt += data.debt.unwrap_or(0) as i64;
+                    }
+                }
+                let out_data = Analytic { debt, money };
+                serde_json::to_string(&out_data).unwrap()
+            }
+            None => "failed".to_string(),
+        },
+        None => "failed".to_string(),
+    }
+}
+#[tauri::command]
 pub async fn csv_transaction_writer(
     host: String,
     port: i32,

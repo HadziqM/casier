@@ -97,10 +97,7 @@ async fn get_cart_debt(con: &crud::Collection) -> String {
 }
 #[tauri::command]
 pub async fn buy_update(host: String, port: i32, rest: i32, unit: i32, id: String) -> String {
-    let con = crud::Collection {
-        host: String::from(&host),
-        port,
-    };
+    let con = crud::Collection { host, port };
     crud::Table::Product
         .update(
             &con,
@@ -160,10 +157,7 @@ pub async fn transaction_all_debt(
     telp: Option<String>,
     due: Option<i32>,
 ) -> String {
-    let con = crud::Collection {
-        host: String::from(&host),
-        port,
-    };
+    let con = crud::Collection { host, port };
     #[derive(Serialize, Deserialize)]
     struct HistoryData {
         id: Option<String>,
@@ -288,10 +282,7 @@ pub async fn get_all_data(host: String, port: i32) -> String {
 }
 #[tauri::command]
 pub async fn delete_update(host: String, port: i32, id: String, unit: i32, pid: String) -> String {
-    let con = crud::Collection {
-        host: String::from(&host),
-        port,
-    };
+    let con = crud::Collection { host, port };
     crud::Table::Cart.delete(&con, &id).await;
     crud::Table::Product
         .update(
@@ -345,10 +336,7 @@ pub async fn change_update(
     id: String,
     cid: String,
 ) -> String {
-    let con = crud::Collection {
-        host: host.to_owned(),
-        port,
-    };
+    let con = crud::Collection { host, port };
     crud::Table::Product
         .update(
             &con,

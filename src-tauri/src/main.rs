@@ -29,6 +29,7 @@ fn main() {
             unique_command::cencel_all,
             csv_maker::csv_transaction_writer,
             csv_maker::csv_history_writer,
+            csv_maker::analyze,
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
