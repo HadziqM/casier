@@ -20,6 +20,14 @@ fn construct_headers() -> reqwest::header::HeaderMap {
     );
     headers
 }
+fn construct_headers_form() -> reqwest::header::HeaderMap {
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert(
+        reqwest::header::CONTENT_TYPE,
+        reqwest::header::HeaderValue::from_static("multipart/form-data"),
+    );
+    headers
+}
 pub struct Collection {
     pub(crate) host: String,
     pub(crate) port: u16,

@@ -16,8 +16,8 @@ import CartSc from "./cartscreen";
 import PrintSc from "./printsreen";
 import DebtSc from "./debtscreen";
 import InspectionSc from "./inspectionscreen";
+import Background from "./components/background";
 import ProductSc from "./productscreen";
-
 interface LoginP {
   host: string;
   port: number;
@@ -37,6 +37,7 @@ export default function Main() {
   const [debt, setDebt] = useState({} as Transaction);
   const [login, setLogin] = useState(false);
   const [logData, setLogData] = useState({} as LoginP);
+  const [background, setBackground] = useState("nope");
   const [newPage, setNewPage] = useState(0);
   const buyEvent = async (data: ModalData, unit: number) => {
     const data_cart = JSON.parse(
@@ -127,9 +128,18 @@ export default function Main() {
     });
     alert(res);
   };
+  const bgEvent = async (dir: string) => {
+    const res = await invoke("change_bg", {
+      host: logData.host,
+      port: logData.port,
+      dir,
+    });
+    alert(res);
+  };
+
   const idkItis = () => {
     const newList = [
-      <Overview />,
+      <Overview path={bgEvent} />,
       <ProductSc product={product} handleEvent={buyEvent} />,
       <CartSc
         data={cart}
@@ -146,6 +156,7 @@ export default function Main() {
   };
   return (
     <>
+      <Background path={background} />
       {login ? (
         <>
           <Menu
