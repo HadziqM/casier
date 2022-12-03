@@ -128,6 +128,25 @@ export default function Main() {
     });
     alert(res);
   };
+  const transactionEvent = async (start: string, stop: string, dir: string) => {
+    const res = await invoke("csv_transaction_writer", {
+      host: logData.host,
+      port: logData.port,
+      start,
+      stop,
+      dir,
+    });
+    alert(res);
+  };
+  const inspectionEvent = async (start: string, stop: string) => {
+    const res = await invoke("analyze", {
+      host: logData.host,
+      port: logData.port,
+      start,
+      stop,
+    });
+    alert(res);
+  };
   const bgEvent = async (dir: string) => {
     const res = await invoke("change_bg", {
       host: logData.host,
@@ -150,7 +169,11 @@ export default function Main() {
       />,
       <PrintSc debt={debt} />,
       <DebtSc debt={debt} handlePay={payEvent} />,
-      <InspectionSc handleData={dataEvent} />,
+      <InspectionSc
+        handleData={dataEvent}
+        handleInspect={inspectionEvent}
+        handleTransaction={transactionEvent}
+      />,
     ];
     return newList[newPage];
   };

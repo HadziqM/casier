@@ -8,8 +8,8 @@ struct Items {
 #[serde(rename_all = "camelCase")]
 struct Length {
     total_items: Option<u32>,
-    code: Option<u8>,
-    error: Option<u8>,
+    code: Option<u16>,
+    error: Option<u16>,
     items: Option<Vec<Items>>,
 }
 fn construct_headers() -> reqwest::header::HeaderMap {

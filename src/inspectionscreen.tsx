@@ -3,9 +3,19 @@ import { useRef } from "react";
 
 interface Prop {
   handleData: (start: string, stop: string, dir: string) => Promise<void>;
+  handleTransaction: (
+    start: string,
+    stop: string,
+    dir: string
+  ) => Promise<void>;
+  handleInspect: (start: string, stop: string) => Promise<void>;
 }
 
-export default function InspectionSc({ handleData }: Prop) {
+export default function InspectionSc({
+  handleData,
+  handleInspect,
+  handleTransaction,
+}: Prop) {
   const dayDate = useRef<HTMLInputElement>(null);
   const startDate = useRef<HTMLInputElement>(null);
   const endDate = useRef<HTMLInputElement>(null);
@@ -18,23 +28,8 @@ export default function InspectionSc({ handleData }: Prop) {
           </h1>
           <form
             className="flex flex-col gap-4 h-full justify-center items-center pt-[60px]"
-            onSubmit={async (e) => {
+            onSubmit={(e) => {
               e.preventDefault();
-              //   alert(new Date(dayDate.current?.value + "T00:00").toISOString());
-              const direction = await save({
-                filters: [
-                  {
-                    extensions: ["csv"],
-                    name: "data",
-                  },
-                ],
-              });
-              if (direction == null) return;
-              await handleData(
-                new Date(dayDate.current?.value + "T00:00").toISOString(),
-                new Date(dayDate.current?.value + "T23:59").toISOString(),
-                direction
-              );
             }}
           >
             <div className="flex">
@@ -44,10 +39,63 @@ export default function InspectionSc({ handleData }: Prop) {
               <input ref={dayDate} type={"date"} required />
             </div>
             <button
+              onClick={async () => {
+                if (!dayDate.current?.value) return;
+                const direction = await save({
+                  filters: [
+                    {
+                      extensions: ["csv"],
+                      name: "data",
+                    },
+                  ],
+                });
+                if (direction == null) return;
+                await handleData(
+                  new Date(dayDate.current?.value + "T00:00").toISOString(),
+                  new Date(dayDate.current?.value + "T23:59").toISOString(),
+                  direction
+                );
+              }}
               className="mt-auto bg-purple-900 p-1 text-gray-100"
               type="submit"
             >
-              Get Data
+              Get History Data
+            </button>
+            <button
+              onClick={async () => {
+                if (!dayDate.current?.value) return;
+                const direction = await save({
+                  filters: [
+                    {
+                      extensions: ["csv"],
+                      name: "data",
+                    },
+                  ],
+                });
+                if (direction == null) return;
+                await handleTransaction(
+                  new Date(dayDate.current?.value + "T00:00").toISOString(),
+                  new Date(dayDate.current?.value + "T23:59").toISOString(),
+                  direction
+                );
+              }}
+              className="mt-auto bg-purple-900 p-1 text-gray-100"
+              type="submit"
+            >
+              Get Transaction Data
+            </button>
+            <button
+              className="mt-auto bg-purple-900 p-1 text-gray-100"
+              type="submit"
+              onClick={async () => {
+                if (!dayDate.current?.value) return;
+                await handleInspect(
+                  new Date(dayDate.current?.value + "T00:00").toISOString(),
+                  new Date(dayDate.current?.value + "T23:59").toISOString()
+                );
+              }}
+            >
+              Inspect
             </button>
           </form>
         </div>
@@ -92,6 +140,12 @@ export default function InspectionSc({ handleData }: Prop) {
               type="submit"
             >
               Get Data
+            </button>
+            <button
+              className="mt-auto bg-purple-900 p-1 text-gray-100"
+              type="submit"
+            >
+              Inspection
             </button>
           </form>
         </div>

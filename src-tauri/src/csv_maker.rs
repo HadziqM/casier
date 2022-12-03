@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, PartialEq)]
 struct TransactionItems {
     id: String,
-    name: String,
     customer: String,
     total: i64,
     product: Vec<String>,
@@ -182,7 +181,7 @@ pub async fn csv_transaction_writer(
                         writer
                             .write_record(&[
                                 data.id.to_owned(),
-                                data.name.to_owned(),
+                                data.customer.to_owned(),
                                 full_data,
                                 data.total.to_string(),
                                 data.debt.unwrap_or(0).to_string(),
