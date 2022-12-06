@@ -148,10 +148,11 @@ export default function Main() {
     return res;
   };
   const bgEvent = async (dir: string) => {
-    const res = await invoke("change_bg", {
+    const res = await invoke("update_test", {
       host: logData.host,
       port: logData.port,
-      dir,
+      path: dir,
+      id: "tah122iaqjoz0ts",
     });
     alert(res);
   };

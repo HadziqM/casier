@@ -27,6 +27,7 @@ fn main() {
             unique_command::delete_update,
             unique_command::change_update,
             unique_command::cencel_all,
+            unique_command::update_test,
             csv_maker::csv_transaction_writer,
             csv_maker::csv_history_writer,
             csv_maker::analyze,

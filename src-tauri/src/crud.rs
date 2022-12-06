@@ -1,3 +1,5 @@
+use std::fs;
+
 use reqwest;
 use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
@@ -166,17 +168,21 @@ impl Table {
     }
     pub async fn update_form(&self, con: &Collection, id: &str, path: &str) -> String {
         let url = [&self.url_struct(con), "/", id].concat();
-        let client = reqwest::blocking::Client::new();
-        let form = reqwest::blocking::multipart::Form::new()
-            .file("img", path)
+        let file = fs::read(path).unwrap();
+        let file_part = reqwest::multipart::Part::bytes(file)
+            .file_name("bg.jpg")
+            .mime_str("image/jpg")
             .unwrap();
+        let form = reqwest::multipart::Form::new().part("img", file_part);
+        let client = reqwest::Client::new();
         match client
             .patch(url)
             .headers(construct_headers_form())
             .multipart(form)
             .send()
+            .await
         {
-            Ok(res) => res.text().unwrap_or("no message".to_string()),
+            Ok(res) => res.text().await.unwrap_or("no message".to_string()),
             Err(_) => "{\"error\":400}".to_string(),
         }
     }

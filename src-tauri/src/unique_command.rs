@@ -357,3 +357,8 @@ pub async fn change_update(
         .await;
     get_prod_cart(&con).await
 }
+#[tauri::command]
+pub async fn update_test(host: String, port: u16, id: String, path: String) -> String {
+    let con = crud::Collection { host, port };
+    crud::Table::Background.update_form(&con, &id, &path).await
+}
