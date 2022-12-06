@@ -22,7 +22,10 @@ interface LoginP {
   host: string;
   port: number;
 }
-
+interface BackgroundUp {
+  id: string;
+  img: string;
+}
 export default function Main() {
   const useDidMountEffect = (func: () => void, deps: any) => {
     const didMount = useRef(false);
@@ -148,13 +151,24 @@ export default function Main() {
     return res;
   };
   const bgEvent = async (dir: string) => {
-    const res = await invoke("update_test", {
-      host: logData.host,
-      port: logData.port,
-      path: dir,
-      id: "tah122iaqjoz0ts",
-    });
-    alert(res);
+    const res = JSON.parse(
+      await invoke("update_test", {
+        host: logData.host,
+        port: logData.port,
+        path: dir,
+        id: "tah122iaqjoz0ts",
+      })
+    ) as BackgroundUp;
+    const url =
+      logData.host +
+      ":" +
+      logData.port +
+      "/api/files/background/" +
+      res.id +
+      "/" +
+      res.img;
+    alert(url);
+    setBackground(url);
   };
 
   const idkItis = () => {
