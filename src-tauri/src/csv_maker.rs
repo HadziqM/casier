@@ -164,16 +164,12 @@ pub async fn csv_transaction_writer(
             "id", "name", "full", "total", "debt", "date", "phone", "address",
         ])
         .expect("idk");
-    let mut money: i64 = 0;
-    let mut debt: i64 = 0;
     match transaction_data.items {
         Some(_) => match transaction_check.items {
             Some(_) => {
                 let checker = &transaction_check.items.unwrap();
                 for data in &transaction_data.items.unwrap() {
                     if checker.contains(data) {
-                        money += data.total as i64;
-                        debt += data.debt.unwrap_or(0) as i64;
                         let full_data = match data.full {
                             true => "yes".to_string(),
                             false => "no".to_string(),
@@ -193,8 +189,7 @@ pub async fn csv_transaction_writer(
                     }
                 }
                 writer.flush().expect("idk");
-                let out_data = Analytic { debt, money };
-                serde_json::to_string(&out_data).unwrap()
+                "success".to_string()
             }
             None => "failed".to_string(),
         },

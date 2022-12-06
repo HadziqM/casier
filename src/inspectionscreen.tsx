@@ -1,14 +1,15 @@
 import { save } from "@tauri-apps/api/dialog";
-import { useRef } from "react";
+import Status from "./components/statusmodal";
+import { useRef, useState } from "react";
 
 interface Prop {
-  handleData: (start: string, stop: string, dir: string) => Promise<void>;
+  handleData: (start: string, stop: string, dir: string) => Promise<string>;
   handleTransaction: (
     start: string,
     stop: string,
     dir: string
-  ) => Promise<void>;
-  handleInspect: (start: string, stop: string) => Promise<void>;
+  ) => Promise<string>;
+  handleInspect: (start: string, stop: string) => Promise<string>;
 }
 
 export default function InspectionSc({
@@ -19,6 +20,10 @@ export default function InspectionSc({
   const dayDate = useRef<HTMLInputElement>(null);
   const startDate = useRef<HTMLInputElement>(null);
   const endDate = useRef<HTMLInputElement>(null);
+  const [modal, setModal] = useState(false);
+  const [data, setData] = useState("");
+  const [notif, setNotif] = useState("");
+  const [useCase, setUseCase] = useState("" as "notif" | "info");
   return (
     <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
       <div className="flex gap-8">
@@ -50,11 +55,15 @@ export default function InspectionSc({
                   ],
                 });
                 if (direction == null) return;
-                await handleData(
-                  new Date(dayDate.current?.value + "T00:00").toISOString(),
-                  new Date(dayDate.current?.value + "T23:59").toISOString(),
-                  direction
+                setNotif(
+                  await handleData(
+                    new Date(dayDate.current?.value + "T00:00").toISOString(),
+                    new Date(dayDate.current?.value + "T23:59").toISOString(),
+                    direction
+                  )
                 );
+                setUseCase("notif");
+                setModal(true);
               }}
               className="mt-auto bg-purple-900 p-1 text-gray-100"
               type="submit"
@@ -73,11 +82,15 @@ export default function InspectionSc({
                   ],
                 });
                 if (direction == null) return;
-                await handleTransaction(
-                  new Date(dayDate.current?.value + "T00:00").toISOString(),
-                  new Date(dayDate.current?.value + "T23:59").toISOString(),
-                  direction
+                setNotif(
+                  await handleTransaction(
+                    new Date(dayDate.current?.value + "T00:00").toISOString(),
+                    new Date(dayDate.current?.value + "T23:59").toISOString(),
+                    direction
+                  )
                 );
+                setUseCase("notif");
+                setModal(true);
               }}
               className="mt-auto bg-purple-900 p-1 text-gray-100"
               type="submit"
@@ -89,10 +102,14 @@ export default function InspectionSc({
               type="submit"
               onClick={async () => {
                 if (!dayDate.current?.value) return;
-                await handleInspect(
-                  new Date(dayDate.current?.value + "T00:00").toISOString(),
-                  new Date(dayDate.current?.value + "T23:59").toISOString()
+                setData(
+                  await handleInspect(
+                    new Date(dayDate.current?.value + "T00:00").toISOString(),
+                    new Date(dayDate.current?.value + "T23:59").toISOString()
+                  )
                 );
+                setUseCase("info");
+                setModal(true);
               }}
             >
               Inspect
@@ -150,6 +167,16 @@ export default function InspectionSc({
           </form>
         </div>
       </div>
+      {modal ? (
+        <Status
+          handleClose={() => setModal(false)}
+          notifData={notif}
+          useCase={useCase}
+          infoData={data}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

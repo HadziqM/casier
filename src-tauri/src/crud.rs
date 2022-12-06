@@ -164,4 +164,20 @@ impl Table {
             serde_json::to_string(&listed).unwrap()
         }
     }
+    pub async fn update_form(&self, con: &Collection, id: &str, path: &str) -> String {
+        let url = [&self.url_struct(con), "/", id].concat();
+        let client = reqwest::blocking::Client::new();
+        let form = reqwest::blocking::multipart::Form::new()
+            .file("img", path)
+            .unwrap();
+        match client
+            .patch(url)
+            .headers(construct_headers_form())
+            .multipart(form)
+            .send()
+        {
+            Ok(res) => res.text().unwrap_or("no message".to_string()),
+            Err(_) => "{\"error\":400}".to_string(),
+        }
+    }
 }

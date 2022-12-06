@@ -119,33 +119,33 @@ export default function Main() {
     setDebt(data_cart);
   };
   const dataEvent = async (start: string, stop: string, dir: string) => {
-    const res = await invoke("csv_history_writer", {
+    const res = (await invoke("csv_history_writer", {
       host: logData.host,
       port: logData.port,
       start,
       stop,
       dir,
-    });
-    alert(res);
+    })) as string;
+    return res;
   };
   const transactionEvent = async (start: string, stop: string, dir: string) => {
-    const res = await invoke("csv_transaction_writer", {
+    const res = (await invoke("csv_transaction_writer", {
       host: logData.host,
       port: logData.port,
       start,
       stop,
       dir,
-    });
-    alert(res);
+    })) as string;
+    return res;
   };
   const inspectionEvent = async (start: string, stop: string) => {
-    const res = await invoke("analyze", {
+    const res = (await invoke("analyze", {
       host: logData.host,
       port: logData.port,
       start,
       stop,
-    });
-    alert(res);
+    })) as string;
+    return res;
   };
   const bgEvent = async (dir: string) => {
     const res = await invoke("change_bg", {

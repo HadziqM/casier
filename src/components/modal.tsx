@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { ModalData, CustomerData, DebtData } from "../type";
 import { currency } from "../lib/math";
+import Status from "./statusmodal";
 import { ask } from "@tauri-apps/api/dialog";
 import Backdrop from "./backdrop";
 
@@ -52,6 +53,7 @@ export default function Modal({
   const [copy, setCopy] = useState(false);
   const [paid, setPaid] = useState(0);
   const [unit, setUnit] = useState(cart ? Number(data?.unit) : 1);
+  const [modal, setModal] = useState(false)
   const add_unit = () => {
     unit < (data?.stock || 0) && setUnit(unit + 1);
   };
@@ -80,6 +82,9 @@ export default function Modal({
         : "Pastikan pelanggan sudah membayar ok?";
     }
   };
+  const getConfirm = (res:boolean) =>{
+    
+  }
   return (
     <Backdrop>
       <motion.div
@@ -332,6 +337,7 @@ export default function Modal({
           </>
         )}
       </motion.div>
+      {modal?<Status handleClose={(res:boolean)=>console.log("wtf")} useCase="confirm" confirmData={warnString()}/>:<></>}
     </Backdrop>
   );
 }
