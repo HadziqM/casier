@@ -9,6 +9,7 @@ import {
   CustomerData,
   TransactionOut,
   BackgroundPB,
+  LoginP,
 } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
@@ -19,10 +20,6 @@ import DebtSc from "./debtscreen";
 import InspectionSc from "./inspectionscreen";
 import Background from "./components/background";
 import ProductSc from "./productscreen";
-interface LoginP {
-  host: string;
-  port: number;
-}
 interface BackgroundUp {
   id: string;
   img: string;
@@ -166,7 +163,11 @@ export default function Main() {
 
   const idkItis = () => {
     const newList = [
-      <Overview path={bgEvent} />,
+      <Overview
+        path={bgEvent}
+        log={logData}
+        back={() => setBackground("nope")}
+      />,
       <ProductSc product={product} handleEvent={buyEvent} />,
       <CartSc
         data={cart}

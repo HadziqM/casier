@@ -121,3 +121,7 @@ export interface Transaction{
   totalItems?:number
   items?:DebtData[]
 }
+export interface LoginP {
+  host: string;
+  port: number;
+}
