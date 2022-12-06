@@ -39,6 +39,8 @@ struct InitialDataInput {
     product: String,
     cart: String,
     debt: String,
+    background: String,
+    header: String,
 }
 #[derive(Serialize, Deserialize)]
 struct ProductUpdated {
@@ -277,6 +279,8 @@ pub async fn get_all_data(host: String, port: u16) -> String {
                 Some("sort=-created&expand=customer,product.product"),
             )
             .await,
+        background: crud::Table::Background.list(&connection, None).await,
+        header: crud::Table::Header.list(&connection, None).await,
     };
     serde_json::to_string(&full_data).unwrap()
 }

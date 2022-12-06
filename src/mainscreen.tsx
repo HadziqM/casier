@@ -8,6 +8,7 @@ import {
   BuyData,
   CustomerData,
   TransactionOut,
+  BackgroundPB,
 } from "./type";
 import Menu from "./components/menubar";
 import Login from "./loginscreen";
@@ -27,21 +28,22 @@ interface BackgroundUp {
   img: string;
 }
 export default function Main() {
-  const useDidMountEffect = (func: () => void, deps: any) => {
-    const didMount = useRef(false);
-
-    useEffect(() => {
-      if (didMount.current) func();
-      else didMount.current = true;
-    }, deps);
-  };
   const [product, setProduct] = useState({} as Product);
   const [cart, setCart] = useState({} as Cart);
   const [debt, setDebt] = useState({} as Transaction);
+  const [bgUrl, setBgUrl] = useState({} as BackgroundUp);
   const [login, setLogin] = useState(false);
   const [logData, setLogData] = useState({} as LoginP);
   const [background, setBackground] = useState("nope");
   const [newPage, setNewPage] = useState(0);
+  const bgUpdate = (id: string, img: string) =>
+    logData.host +
+    ":" +
+    logData.port +
+    "/api/files/background/" +
+    id +
+    "/" +
+    img;
   const buyEvent = async (data: ModalData, unit: number) => {
     const data_cart = JSON.parse(
       await invoke("buy_update", {
@@ -156,19 +158,10 @@ export default function Main() {
         host: logData.host,
         port: logData.port,
         path: dir,
-        id: "tah122iaqjoz0ts",
+        id: bgUrl.id,
       })
     ) as BackgroundUp;
-    const url =
-      logData.host +
-      ":" +
-      logData.port +
-      "/api/files/background/" +
-      res.id +
-      "/" +
-      res.img;
-    alert(url);
-    setBackground(url);
+    setBackground(bgUpdate(res.id, res.img));
   };
 
   const idkItis = () => {
@@ -213,6 +206,10 @@ export default function Main() {
           cartData={(data: Cart) => setCart(data)}
           debtData={(data: Transaction) => setDebt(data)}
           loginData={(data: LoginP) => setLogData(data)}
+          bacgroundData={(data: BackgroundPB) =>
+            data.items &&
+            setBgUrl({ img: data.items[0].img, id: data.items[0].id })
+          }
         />
       )}
     </>

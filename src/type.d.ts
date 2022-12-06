@@ -48,10 +48,20 @@ export interface Hystory{
     }
   }[]
 }
+export interface BackgroundPB{
+  error?:number,
+  code?:number,
+  items?:{
+    id:string,
+    img:string
+  }[]
+}
 export interface InitialData{
   product:string,
   cart:string,
-  debt:string
+  debt:string,
+  background:string,
+  header:string
 }
 export interface BuyData{
   product:string,

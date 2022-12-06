@@ -1,11 +1,10 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { GrStatusWarning, GrStatusGood, GrStatusUnknown } from "react-icons/gr";
 import {
   FaCheck,
   FaExclamationTriangle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import { Product, Cart, Transaction, InitialData } from "./type";
+import { Product, Cart, Transaction, InitialData, BackgroundPB } from "./type";
 import { useState } from "react";
 interface Props {
   logged: () => void;
@@ -13,6 +12,7 @@ interface Props {
   cartData: (data: Cart) => void;
   debtData: (data: Transaction) => void;
   loginData: (data: { host: string; port: number }) => void;
+  bacgroundData: (data: BackgroundPB) => void;
 }
 
 export default function Login({
@@ -21,6 +21,7 @@ export default function Login({
   loginData,
   cartData,
   debtData,
+  bacgroundData,
 }: Props) {
   const icon = [
     <FaExclamationCircle className="w-8 h-8 text-[rgba(50,0,200,0.5)] mr-4" />,
@@ -42,6 +43,7 @@ export default function Login({
     const product: Product = JSON.parse(data.product);
     const cart: Cart = JSON.parse(data.cart);
     const debt: Transaction = JSON.parse(data.debt);
+    const bg: BackgroundPB = JSON.parse(data.background);
     if (product.error || cart.error || debt.error) {
       setLoading("Error Connecting");
       setIcons(icon[2]);
@@ -54,6 +56,7 @@ export default function Login({
       productData(product);
       cartData(cart);
       debtData(debt);
+      bacgroundData(bg);
       loginData({ host, port });
       setTimeout(() => logged(), 700);
     }
