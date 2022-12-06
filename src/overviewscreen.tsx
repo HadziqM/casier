@@ -8,8 +8,9 @@ interface Prop {
 }
 export default function Overview({ path, back, log }: Prop) {
   return (
-    <div className="flex flex-col absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
+    <div className="flex flex-col gap-4 absolute top-0 right-0 w-[calc(100vw-100px)] h-screen justify-center items-center">
       <button
+        className="bg-purple-900 p-1 text-gray-100"
         onClick={async () => {
           const dir = await open({
             filters: [{ name: "Image", extensions: ["jpg", "png"] }],
@@ -20,8 +21,13 @@ export default function Overview({ path, back, log }: Prop) {
       >
         Change Background
       </button>
-      <button onClick={() => back()}>Original BG</button>
-      <button>
+      <button
+        className="bg-purple-900 p-1 text-gray-100"
+        onClick={() => back()}
+      >
+        Original BG
+      </button>
+      <button className="bg-purple-900 p-1 text-gray-100">
         <a href={log.host + ":" + log.port + "/_/"} target={"_blank"}>
           Admin Dashboard
         </a>
